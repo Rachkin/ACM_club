@@ -23,6 +23,7 @@ struct Screen {
     std::string speaker;
     std::string say;
     std::string background;
+    std::vector<std::string> characters;
     Screen() { }
     Screen(string name, string type, string child, string speaker, string say, string background) :
         name(name), type(type), child(child), speaker(speaker), say(say), background(background) { }
@@ -111,6 +112,11 @@ void initScreens(){
         _readUntilSpace(s, say, i);        ++i;
         _readUntilSpace(s, background, i); ++i;
         screens[name] = Screen(name, type, child, speaker, say, background);
+        string character;
+        while(i < s.size()){
+            _readUntilSpace(s, character, i); ++i;
+            screens[name].characters.push_back(character);
+        }
     }
 }
 
@@ -156,29 +162,17 @@ int main() {
     UI_esc["menu_resume"].setCharacterSize(30);
     UI_esc["menu_resume"].setPosition(120,120);
 
-    UI_esc["menu_load1"].setString("load1");
-    UI_esc["menu_load1"].setCharacterSize(30);
-    UI_esc["menu_load1"].setPosition(120,150);
+    for(int i = 1; i <= 3; i++){
+        UI_esc["menu_load" + to_string(i)].setString("load" + to_string(i));
+        UI_esc["menu_load" + to_string(i)].setCharacterSize(30);
+        UI_esc["menu_load" + to_string(i)].setPosition(120,150 + (i - 1) * 30);
+    }
 
-    UI_esc["menu_load2"].setString("load2");
-    UI_esc["menu_load2"].setCharacterSize(30);
-    UI_esc["menu_load2"].setPosition(120,180);
-
-    UI_esc["menu_load3"].setString("load3");
-    UI_esc["menu_load3"].setCharacterSize(30);
-    UI_esc["menu_load3"].setPosition(120,210);
-
-    UI_esc["menu_save1"].setString("save1");
-    UI_esc["menu_save1"].setCharacterSize(30);
-    UI_esc["menu_save1"].setPosition(300,150);
-
-    UI_esc["menu_save2"].setString("save2");
-    UI_esc["menu_save2"].setCharacterSize(30);
-    UI_esc["menu_save2"].setPosition(300,180);
-
-    UI_esc["menu_save3"].setString("save3");
-    UI_esc["menu_save3"].setCharacterSize(30);
-    UI_esc["menu_save3"].setPosition(300,210);
+    for(int i = 1; i <= 3; i++) {
+        UI_esc["menu_save" + to_string(i)].setString("save" + to_string(i));
+        UI_esc["menu_save" + to_string(i)].setCharacterSize(30);
+        UI_esc["menu_save" + to_string(i)].setPosition(300, 150);
+    }
 
     UI_esc["menu_exit"].setString("!exit game!");
     UI_esc["menu_exit"].setCharacterSize(30);
@@ -246,12 +240,12 @@ int main() {
             for(auto &p : UI_esc) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
                 if (bounds.contains(mouse)) {
-                    if (p.second.getColor() == Color::Black) is_changed = 1;
-                    p.second.setColor(Color::Red);
+                    if (p.second.getFillColor() == Color::Black) is_changed = 1;
+                    p.second.setFillColor(Color::Red);
                 }
                 else {
-                    if (p.second.getColor() == Color::Red) is_changed = 1;
-                    p.second.setColor(Color::Black);
+                    if (p.second.getFillColor() == Color::Red) is_changed = 1;
+                    p.second.setFillColor(Color::Black);
                 }
 
             }
@@ -261,47 +255,23 @@ int main() {
                 if (UI_esc["menu_exit"].getGlobalBounds().contains(mouse)) {
                     window.close();
                 }
-                if (UI_esc["menu_load1"].getGlobalBounds().contains(mouse)) {
-                    ifstream in("saves/save.txt");
-                    string s;
-                    in >> s;
-                    current_screen = screens[s];
-                    is_escaped = 0;
-                    is_changed = 1;
+                for(int i = 1; i <= 3; i++) {
+                    if (UI_esc["menu_load" + to_string(i)].getGlobalBounds().contains(mouse)) {
+                        ifstream in("saves/save" + to_string(i) + ".txt");
+                        string s;
+                        in >> s;
+                        current_screen = screens[s];
+                        is_escaped = 0;
+                        is_changed = 1;
+                    }
                 }
-                if (UI_esc["menu_load2"].getGlobalBounds().contains(mouse)) {
-                    ifstream in("saves/save2.txt");
-                    string s;
-                    in >> s;
-                    current_screen = screens[s];
-                    is_escaped = 0;
-                    is_changed = 1;
-                }
-                if (UI_esc["menu_load3"].getGlobalBounds().contains(mouse)) {
-                    ifstream in("saves/save3.txt");
-                    string s;
-                    in >> s;
-                    current_screen = screens[s];
-                    is_escaped = 0;
-                    is_changed = 1;
-                }
-                if (UI_esc["menu_save1"].getGlobalBounds().contains(mouse)) {
-                    ofstream out("saves/save.txt");
-                    out << current_screen.name;
-                    is_escaped = 0;
-                    is_changed = 1;
-                }
-                if (UI_esc["menu_save2"].getGlobalBounds().contains(mouse)) {
-                    ofstream out("saves/save2.txt");
-                    out << current_screen.name;
-                    is_escaped = 0;
-                    is_changed = 1;
-                }
-                if (UI_esc["menu_save3"].getGlobalBounds().contains(mouse)) {
-                    ofstream out("saves/save3.txt");
-                    out << current_screen.name;
-                    is_escaped = 0;
-                    is_changed = 1;
+                for(int i = 1; i <= 3; i++) {
+                    if (UI_esc["menu_save" + to_string(i)].getGlobalBounds().contains(mouse)) {
+                        ofstream out("saves/save" + to_string(i) + ".txt");
+                        out << current_screen.name;
+                        is_escaped = 0;
+                        is_changed = 1;
+                    }
                 }
                 if (UI_esc["menu_resume"].getGlobalBounds().contains(mouse)) {
                     is_escaped = 0;
@@ -313,12 +283,12 @@ int main() {
             for(auto &p : UI_dialog) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
                 if (bounds.contains(mouse)) {
-                    if (p.second.getColor() == Color::Black) is_changed = 1;
-                    p.second.setColor(Color::Red);
+                    if (p.second.getFillColor() == Color::Black) is_changed = 1;
+                    p.second.setFillColor(Color::Red);
                 }
                 else {
-                    if (p.second.getColor() == Color::Red) is_changed = 1;
-                    p.second.setColor(Color::Black);
+                    if (p.second.getFillColor() == Color::Red) is_changed = 1;
+                    p.second.setFillColor(Color::Black);
                 }
 
             }
@@ -349,7 +319,7 @@ int main() {
 
                 window.draw(dialog);
                 int i = 0;
-                /*
+
                 for(auto c : current_screen.characters){
                     Sprite character = sprites[c];
                     double k = 0;
@@ -362,7 +332,7 @@ int main() {
                     window.draw(character);
                     i++;
                 }
-                */
+
 
 
                 // sprites["backgrounds/back"].setScale(screenSize.x / sprites["backgrounds/back"].getLocalBounds().width, screenSize.y / sprites["backgrounds/back"].getLocalBounds().height);
