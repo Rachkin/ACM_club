@@ -1,7 +1,7 @@
 //name type child speaker say background
-main monolog hello inhead hello_world back
-hello monolog dio giorno giogio front
-dio monolog wry dio dio back
+main monolog hello inhead hello_world enterence
+hello monolog dio giorno giogio enterence
+dio monolog wry dio dio front
 wry monolog -1 dio wry front
 
 

@@ -3,3 +3,4 @@ back backgrounds/back.jpg
 front backgrounds/front.jpg
 dialog backgrounds/dialog.png
 escmenu backgrounds/escmenu.png
+enterence backgrounds/enterence.jpg

@@ -182,67 +182,69 @@ int main() {
 
     int64_t textstart_time = timeSinceEpochMillisec();
 
-    int string_shown = 0;
+    int64_t next_time = timeSinceEpochMillisec();
+    int64_t d_next = 200;
 
-    int string_will_shown = 0;
+    int64_t string_shown = 0;
+
+    int64_t string_will_shown = 0;
 
     bool is_escaped = 0;
 
-    Text menu_label;
-    menu_label.setString("MENU");
-    menu_label.setCharacterSize(40);
-    menu_label.setFont(fonts["arial"]);
-    menu_label.setColor(sf::Color::Black);
-    menu_label.setPosition(100,70);
+    map < string, Text > UI_esc, UI_dialog;
 
-    Text menu_exit;
-    menu_exit.setString("exit");
-    menu_exit.setCharacterSize(30);
-    menu_exit.setFont(fonts["arial"]);
-    menu_exit.setColor(sf::Color::Black);
-    menu_exit.setPosition(120,120);
+    UI_esc["menu_label"].setString("MENU");
+    UI_esc["menu_label"].setCharacterSize(40);
+    UI_esc["menu_label"].setPosition(100,70);
 
-    Text menu_load1;
-    menu_load1.setString("load1");
-    menu_load1.setCharacterSize(30);
-    menu_load1.setFont(fonts["arial"]);
-    menu_load1.setColor(sf::Color::Black);
-    menu_load1.setPosition(120,150);
 
-    Text menu_load2;
-    menu_load2.setString("load2");
-    menu_load2.setCharacterSize(30);
-    menu_load2.setFont(fonts["arial"]);
-    menu_load2.setColor(sf::Color::Black);
-    menu_load2.setPosition(120,180);
+    UI_esc["menu_resume"].setString("resume");
+    UI_esc["menu_resume"].setCharacterSize(30);
+    UI_esc["menu_resume"].setPosition(120,120);
 
-    Text menu_load3;
-    menu_load3.setString("load3");
-    menu_load3.setCharacterSize(30);
-    menu_load3.setFont(fonts["arial"]);
-    menu_load3.setColor(sf::Color::Black);
-    menu_load3.setPosition(120,210);
+    UI_esc["menu_load1"].setString("load1");
+    UI_esc["menu_load1"].setCharacterSize(30);
+    UI_esc["menu_load1"].setPosition(120,150);
 
-    Text menu_save1;
-    menu_save1.setString("save1");
-    menu_save1.setCharacterSize(30);
-    menu_save1.setFont(fonts["arial"]);
-    menu_save1.setColor(sf::Color::Black);
-    menu_save1.setPosition(300,150);
+    UI_esc["menu_load2"].setString("load2");
+    UI_esc["menu_load2"].setCharacterSize(30);
+    UI_esc["menu_load2"].setPosition(120,180);
 
-    Text menu_save2;
-    menu_save2.setString("save2");
-    menu_save2.setCharacterSize(30);
-    menu_save2.setFont(fonts["arial"]);
-    menu_save2.setColor(sf::Color::Black);
-    menu_save2.setPosition(300,180);
+    UI_esc["menu_load3"].setString("load3");
+    UI_esc["menu_load3"].setCharacterSize(30);
+    UI_esc["menu_load3"].setPosition(120,210);
 
-    Text menu_save3;
-    menu_save3.setString("save3");
-    menu_save3.setCharacterSize(30);
-    menu_save3.setFont(fonts["arial"]);
-    menu_save3.setColor(sf::Color::Black);
-    menu_save3.setPosition(300,210);
+    UI_esc["menu_save1"].setString("save1");
+    UI_esc["menu_save1"].setCharacterSize(30);
+    UI_esc["menu_save1"].setPosition(300,150);
+
+    UI_esc["menu_save2"].setString("save2");
+    UI_esc["menu_save2"].setCharacterSize(30);
+    UI_esc["menu_save2"].setPosition(300,180);
+
+    UI_esc["menu_save3"].setString("save3");
+    UI_esc["menu_save3"].setCharacterSize(30);
+    UI_esc["menu_save3"].setPosition(300,210);
+
+    UI_esc["menu_exit"].setString("!exit game!");
+    UI_esc["menu_exit"].setCharacterSize(30);
+    UI_esc["menu_exit"].setPosition(120,300);
+
+
+    UI_dialog["menu_botton"].setString("menu");
+    UI_dialog["menu_botton"].setCharacterSize(30);
+    UI_dialog["menu_botton"].setPosition(20,window.getSize().y - 50);
+
+
+    for(auto &p : UI_esc){
+        p.second.setFont(fonts["arial"]);
+        p.second.setColor(sf::Color::Black);
+    }
+
+    for(auto &p : UI_dialog){
+        p.second.setFont(fonts["arial"]);
+        p.second.setColor(sf::Color::Black);
+    }
 
 
     while(window.isOpen()){
@@ -251,25 +253,33 @@ int main() {
 
         while(window.pollEvent(event)) {
 
-            if(event.type == sf::Event::Closed){
-                window.close();
-            }
-
-            if ((current_screen.type == "monolog") && (event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)){
-                if(current_screen.child == "-1") window.close();
-                current_screen = screens[current_screen.child];
-                is_changed = 1;
-                textstart_time = now_time + 100;
-            }
-
-            if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)){
-                is_escaped = 1 - is_escaped;
-                is_changed = 1;
+            string_will_shown = min((int64_t)(now_time - textstart_time) / 100, (int64_t)strings[current_screen.say].size());
+            if(next_time <= now_time) {
+                if (event.type == sf::Event::Closed) {
+                    window.close();
+                }
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) {
+                    if (string_will_shown == (int) strings[current_screen.say].size()) {
+                        if (current_screen.child == "-1") window.close();
+                        current_screen = screens[current_screen.child];
+                        textstart_time = now_time + 100;
+                    } else {
+                     //   string_will_shown = (int) strings[current_screen.say].size();
+                        textstart_time = -10000000;
+                    }
+                    is_changed = 1;
+                    cout << string_will_shown << endl;
+                }
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)) {
+                    is_escaped = 1 - is_escaped;
+                    is_changed = 1;
+                }
+                next_time = now_time + d_next;
             }
 
         }
+        string_will_shown = min((int64_t)(now_time - textstart_time) / 100, (int64_t)strings[current_screen.say].size());
 
-        string_will_shown = min((int)(now_time - textstart_time) / 100, (int)strings[current_screen.say].size());
         if(string_will_shown != string_shown){
             is_changed = 1;
             string_shown = string_will_shown;
@@ -279,40 +289,25 @@ int main() {
 
         // hit test
         if(is_escaped) {
-            sf::FloatRect bounds_exit = menu_exit.getGlobalBounds();
-            if (bounds_exit.contains(mouse)){ if(menu_exit.getColor() == Color::Black) is_changed = 1; menu_exit.setColor(Color::Red);}
-            else { if(menu_exit.getColor() == Color::Red) is_changed = 1; menu_exit.setColor(Color::Black);}
+            for(auto &p : UI_esc) {
+                sf::FloatRect bounds = p.second.getGlobalBounds();
+                if (bounds.contains(mouse)) {
+                    if (p.second.getColor() == Color::Black) is_changed = 1;
+                    p.second.setColor(Color::Red);
+                }
+                else {
+                    if (p.second.getColor() == Color::Red) is_changed = 1;
+                    p.second.setColor(Color::Black);
+                }
 
-            sf::FloatRect bounds_load1 = menu_load1.getGlobalBounds();
-            if (bounds_load1.contains(mouse)){ if(menu_load1.getColor() == Color::Black) is_changed = 1; menu_load1.setColor(Color::Red);}
-            else { if(menu_load1.getColor() == Color::Red) is_changed = 1; menu_load1.setColor(Color::Black);}
-
-            sf::FloatRect bounds_load2 = menu_load2.getGlobalBounds();
-            if (bounds_load2.contains(mouse)){ if(menu_load2.getColor() == Color::Black) is_changed = 1; menu_load2.setColor(Color::Red);}
-            else { if(menu_load2.getColor() == Color::Red) is_changed = 1; menu_load2.setColor(Color::Black);}
-
-            sf::FloatRect bounds_load3 = menu_load3.getGlobalBounds();
-            if (bounds_load3.contains(mouse)){ if(menu_load3.getColor() == Color::Black) is_changed = 1; menu_load3.setColor(Color::Red);}
-            else { if(menu_load3.getColor() == Color::Red) is_changed = 1; menu_load3.setColor(Color::Black);}
-
-            sf::FloatRect bounds_save1 = menu_save1.getGlobalBounds();
-            if (bounds_save1.contains(mouse)){ if(menu_save1.getColor() == Color::Black) is_changed = 1; menu_save1.setColor(Color::Red);}
-            else { if(menu_save1.getColor() == Color::Red) is_changed = 1; menu_save1.setColor(Color::Black);}
-
-            sf::FloatRect bounds_save2 = menu_save2.getGlobalBounds();
-            if (bounds_save2.contains(mouse)){ if(menu_save2.getColor() == Color::Black) is_changed = 1; menu_save2.setColor(Color::Red);}
-            else { if(menu_save2.getColor() == Color::Red) is_changed = 1; menu_save2.setColor(Color::Black);}
-
-            sf::FloatRect bounds_save3 = menu_save3.getGlobalBounds();
-            if (bounds_save3.contains(mouse)){ if(menu_save3.getColor() == Color::Black) is_changed = 1; menu_save3.setColor(Color::Red);}
-            else { if(menu_save3.getColor() == Color::Red) is_changed = 1; menu_save3.setColor(Color::Black);}
+            }
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 // transform the mouse position from window coordinates to world coordinates
-                if (bounds_exit.contains(mouse)) {
+                if (UI_esc["menu_exit"].getGlobalBounds().contains(mouse)) {
                     window.close();
                 }
-                if (bounds_load1.contains(mouse)) {
+                if (UI_esc["menu_load1"].getGlobalBounds().contains(mouse)) {
                     ifstream in("save.txt");
                     string s;
                     in >> s;
@@ -320,7 +315,7 @@ int main() {
                     is_escaped = 0;
                     is_changed = 1;
                 }
-                if (bounds_load2.contains(mouse)) {
+                if (UI_esc["menu_load2"].getGlobalBounds().contains(mouse)) {
                     ifstream in("save2.txt");
                     string s;
                     in >> s;
@@ -328,7 +323,7 @@ int main() {
                     is_escaped = 0;
                     is_changed = 1;
                 }
-                if (bounds_load3.contains(mouse)) {
+                if (UI_esc["menu_load3"].getGlobalBounds().contains(mouse)) {
                     ifstream in("save3.txt");
                     string s;
                     in >> s;
@@ -336,25 +331,51 @@ int main() {
                     is_escaped = 0;
                     is_changed = 1;
                 }
-                if (bounds_save1.contains(mouse)) {
+                if (UI_esc["menu_save1"].getGlobalBounds().contains(mouse)) {
                     ofstream out("save.txt");
                     out << current_screen.name;
                     is_escaped = 0;
                     is_changed = 1;
                 }
-                if (bounds_save2.contains(mouse)) {
+                if (UI_esc["menu_save2"].getGlobalBounds().contains(mouse)) {
                     ofstream out("save2.txt");
                     out << current_screen.name;
                     is_escaped = 0;
                     is_changed = 1;
                 }
-                if (bounds_save3.contains(mouse)) {
+                if (UI_esc["menu_save3"].getGlobalBounds().contains(mouse)) {
                     ofstream out("save3.txt");
                     out << current_screen.name;
                     is_escaped = 0;
                     is_changed = 1;
                 }
+                if (UI_esc["menu_resume"].getGlobalBounds().contains(mouse)) {
+                    is_escaped = 0;
+                    is_changed = 1;
+                }
 
+            }
+        }
+        if(is_escaped == 0){
+
+            for(auto &p : UI_dialog) {
+                sf::FloatRect bounds = p.second.getGlobalBounds();
+                if (bounds.contains(mouse)) {
+                    if (p.second.getColor() == Color::Black) is_changed = 1;
+                    p.second.setColor(Color::Red);
+                }
+                else {
+                    if (p.second.getColor() == Color::Red) is_changed = 1;
+                    p.second.setColor(Color::Black);
+                }
+
+            }
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                if (UI_dialog["menu_botton"].getGlobalBounds().contains(mouse)) {
+                    is_escaped = 1;
+                    is_changed = 1;
+                }
             }
         }
 
@@ -364,7 +385,7 @@ int main() {
 
                 Sprite background = sprites[current_screen.background];
                 background.setScale(screenSize.x / background.getLocalBounds().width,
-                                    screenSize.y / background.getLocalBounds().height);
+                                    (screenSize.y-130) / background.getLocalBounds().height);
 
                 window.draw(background);
 
@@ -395,6 +416,9 @@ int main() {
                                 window.getSize().y - 80); // - say.getGlobalBounds().height/2
                 window.draw(say);
 
+                for(auto &p : UI_dialog) {
+                    window.draw(p.second);
+                }
 
                 window.display();
                 is_changed = 0;
@@ -410,28 +434,21 @@ int main() {
                 ifstream in("save.txt");
                 string s;
                 in >> s;
-                menu_load1.setString("load1(" + s + ")");
+                UI_esc["menu_load1"].setString("load1(" + s + ")");
 
                 ifstream in2("save2.txt");
                 string s2;
                 in2 >> s2;
-                menu_load2.setString("load2(" + s2 + ")");
+                UI_esc["menu_load2"].setString("load2(" + s2 + ")");
 
                 ifstream in3("save3.txt");
                 string s3;
                 in3 >> s3;
-                menu_load3.setString("load3(" + s3 + ")");
+                UI_esc["menu_load3"].setString("load3(" + s3 + ")");
 
-                window.draw(menu_label);
-                window.draw(menu_exit);
-
-                window.draw(menu_load1);
-                window.draw(menu_load2);
-                window.draw(menu_load3);
-
-                window.draw(menu_save1);
-                window.draw(menu_save2);
-                window.draw(menu_save3);
+                for(auto &p : UI_esc) {
+                    window.draw(p.second);
+                }
 
                 window.display();
                 is_changed = 0;
