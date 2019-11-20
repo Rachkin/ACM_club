@@ -12,12 +12,17 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="ced30ccd-bbaa-41e6-8703-017186f0a33e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/images/characters/dio.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/CMakeLists.txt" beforeDir="false" afterPath="$PROJECT_DIR$/CMakeLists.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/ACM_club" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/ACM_club" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ACM_club.dir/CXX.includecache" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ACM_club.dir/CXX.includecache" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ACM_club.dir/depend.internal" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ACM_club.dir/depend.internal" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ACM_club.dir/depend.make" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ACM_club.dir/depend.make" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ACM_club.dir/main.cpp.o" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/ACM_club.dir/main.cpp.o" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" beforeDir="false" afterPath="$PROJECT_DIR$/cmake-build-debug/CMakeFiles/clion-log.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images.txt" beforeDir="false" afterPath="$PROJECT_DIR$/images.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/images/characters/giogio.png" beforeDir="false" afterPath="$PROJECT_DIR$/images/characters/giogio.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.cpp" beforeDir="false" afterPath="$PROJECT_DIR$/main.cpp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/save.txt" beforeDir="false" afterPath="$PROJECT_DIR$/save.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens.txt" beforeDir="false" afterPath="$PROJECT_DIR$/screens.txt" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -82,7 +87,7 @@
       <option name="presentableId" value="Default" />
       <updated>1574091461761</updated>
       <workItem from="1574091466652" duration="2913000" />
-      <workItem from="1574170483206" duration="24623000" />
+      <workItem from="1574170483206" duration="28078000" />
     </task>
     <task id="LOCAL-00001" summary="Огые сщььше">
       <created>1574247507145</created>
@@ -91,7 +96,14 @@
       <option name="project" value="LOCAL" />
       <updated>1574247507145</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="sfml added">
+      <created>1574253613108</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1574253613108</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -109,7 +121,11 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <option name="ADD_EXTERNAL_FILES_SILENTLY" value="true" />
     <MESSAGE value="Огые сщььше" />
-    <option name="LAST_COMMIT_MESSAGE" value="Огые сщььше" />
+    <MESSAGE value="sfml added" />
+    <option name="LAST_COMMIT_MESSAGE" value="sfml added" />
   </component>
 </project>

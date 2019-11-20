@@ -23,6 +23,7 @@ struct Screen{
     string speaker;
     string say;
     string background;
+    vector<string> characters;
     Screen(){}
     Screen(string name, string type, string child, string speaker, string say, string background):
     name(name),type(type),child(child),speaker(speaker),say(say),background(background){}
@@ -76,9 +77,6 @@ void initTexts(){
            // cout << text;
         }
     }
-
-
-
 }
 
 void initSprites(){
@@ -143,6 +141,16 @@ void initScreens(){
         }
         i++;
         screens[name] = Screen(name, type, child, speaker, say, background);
+
+        while(i < s.size()){
+            string character;
+            for(; s[i] != ' ' && i < s.size(); i++){
+                character += s[i];
+            }
+            i++;
+            screens[name].characters.push_back(character);
+        }
+
         //cout << name << " " << type << endl;
     }
 }
@@ -397,6 +405,21 @@ int main() {
                 dialog.setPosition(0, screenSize.y - 130);
 
                 window.draw(dialog);
+                int i = 0;
+                for(auto c : current_screen.characters){
+                    Sprite character = sprites[c];
+                    double k = 0;
+                    if(c == current_screen.speaker) k = 0.8;
+                        else k = 0.5;
+                    character.setScale(screenSize.y / character.getLocalBounds().height * k,
+                                       screenSize.y / character.getLocalBounds().height * k);
+                    character.setPosition((i+1) * screenSize.x / (current_screen.characters.size()+1) - character.getGlobalBounds().width/2,
+                            screenSize.y/2 - character.getGlobalBounds().height/2);
+                    window.draw(character);
+                    i++;
+                }
+
+
                 // sprites["backgrounds/back"].setScale(screenSize.x / sprites["backgrounds/back"].getLocalBounds().width, screenSize.y / sprites["backgrounds/back"].getLocalBounds().height);
                 //cout << current_screen.name;
                 Text speaker;
