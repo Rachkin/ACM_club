@@ -2,6 +2,7 @@
 main monolog hello inhead hello_world enterence giorno
 hello monolog dio giorno giogio enterence giorno
 dio monolog wry dio dio front dio giorno
-wry monolog -1 dio wry front dio
+wry monolog muda dio wry front dio giorno
+muda monolog -1 giorno muda front dio giorno
 
 

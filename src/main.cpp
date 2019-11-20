@@ -57,7 +57,7 @@ static void _readUntilEOL(const std::string& src, std::string& dst, int& pos) {
 
 void initTexts() {
     fonts["arial"].loadFromFile("fonts/arial.ttf");
-    std::vector<string> text_files = {"texts/ui.txt"};
+    std::vector<string> text_files = {"texts/ui.txt", "texts/dialogs.txt"};
     for(const auto& file : text_files) {
         std::ifstream in(file);
         std::string s;
@@ -116,6 +116,7 @@ void initScreens(){
         while(i < s.size()){
             _readUntilSpace(s, character, i); ++i;
             screens[name].characters.push_back(character);
+            character = "";
         }
     }
 }
@@ -212,11 +213,10 @@ int main() {
                         current_screen = screens[current_screen.child];
                         textstart_time = now_time + 100;
                     } else {
-                     //   string_will_shown = (int) strings[current_screen.say].size();
                         textstart_time = -10000000;
                     }
                     is_changed = 1;
-                    std::cout << string_will_shown << std::endl;
+
                 }
                 if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)) {
                     is_escaped = 1 - is_escaped;
@@ -311,20 +311,13 @@ int main() {
 
                 window.draw(background);
 
-
-                Sprite dialog = sprites["dialog"];
-                dialog.setScale(screenSize.x / dialog.getLocalBounds().width,
-                                (130) / dialog.getLocalBounds().height);
-                dialog.setPosition(0, screenSize.y - 130);
-
-                window.draw(dialog);
                 int i = 0;
 
                 for(auto c : current_screen.characters){
                     Sprite character = sprites[c];
                     double k = 0;
                     if(c == current_screen.speaker) k = 0.8;
-                        else k = 0.5;
+                        else k = 0.7;
                     character.setScale(screenSize.y / character.getLocalBounds().height * k,
                                        screenSize.y / character.getLocalBounds().height * k);
                     character.setPosition((i+1) * screenSize.x / (current_screen.characters.size()+1) - character.getGlobalBounds().width/2,
@@ -333,10 +326,13 @@ int main() {
                     i++;
                 }
 
+                Sprite dialog = sprites["dialog"];
+                dialog.setScale(screenSize.x / dialog.getLocalBounds().width,
+                                (130) / dialog.getLocalBounds().height);
+                dialog.setPosition(0, screenSize.y - 130);
 
+                window.draw(dialog);
 
-                // sprites["backgrounds/back"].setScale(screenSize.x / sprites["backgrounds/back"].getLocalBounds().width, screenSize.y / sprites["backgrounds/back"].getLocalBounds().height);
-                //cout << current_screen.name;
                 Text speaker;
                 speaker.setString(characters[current_screen.speaker].fullname);
                 speaker.setCharacterSize(30);
