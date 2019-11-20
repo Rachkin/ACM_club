@@ -241,7 +241,7 @@ int main() {
 
         sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
 
-        // hit test
+        // hit test6
         if(is_escaped) {
             for(auto &p : UI_esc) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
@@ -348,6 +348,23 @@ int main() {
                 dialog.setPosition(0, screenSize.y - 130);
 
                 window.draw(dialog);
+                int i = 0;
+                /*
+                for(auto c : current_screen.characters){
+                    Sprite character = sprites[c];
+                    double k = 0;
+                    if(c == current_screen.speaker) k = 0.8;
+                        else k = 0.5;
+                    character.setScale(screenSize.y / character.getLocalBounds().height * k,
+                                       screenSize.y / character.getLocalBounds().height * k);
+                    character.setPosition((i+1) * screenSize.x / (current_screen.characters.size()+1) - character.getGlobalBounds().width/2,
+                            screenSize.y/2 - character.getGlobalBounds().height/2);
+                    window.draw(character);
+                    i++;
+                }
+                */
+
+
                 // sprites["backgrounds/back"].setScale(screenSize.x / sprites["backgrounds/back"].getLocalBounds().width, screenSize.y / sprites["backgrounds/back"].getLocalBounds().height);
                 //cout << current_screen.name;
                 Text speaker;

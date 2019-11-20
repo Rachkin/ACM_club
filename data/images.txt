@@ -4,3 +4,5 @@ front backgrounds/front.jpg
 dialog backgrounds/dialog.png
 escmenu backgrounds/escmenu.png
 enterence backgrounds/enterence.jpg
+giorno characters/giogio.png
+dio characters/dio.png
