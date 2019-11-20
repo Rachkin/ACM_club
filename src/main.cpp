@@ -171,7 +171,7 @@ int main() {
     for(int i = 1; i <= 3; i++) {
         UI_esc["menu_save" + to_string(i)].setString("save" + to_string(i));
         UI_esc["menu_save" + to_string(i)].setCharacterSize(30);
-        UI_esc["menu_save" + to_string(i)].setPosition(300, 150);
+        UI_esc["menu_save" + to_string(i)].setPosition(300, 150 + (i - 1) * 30);
     }
 
     UI_esc["menu_exit"].setString("!exit game!");
@@ -370,20 +370,13 @@ int main() {
 
                 window.draw(background);
 
-                ifstream in("saves/save.txt");
-                string s;
-                in >> s;
-                UI_esc["menu_load1"].setString("load1(" + s + ")");
+                for(int i = 1; i <= 3; i++) {
 
-                ifstream in2("saves/save2.txt");
-                string s2;
-                in2 >> s2;
-                UI_esc["menu_load2"].setString("load2(" + s2 + ")");
-
-                ifstream in3("saves/save3.txt");
-                string s3;
-                in3 >> s3;
-                UI_esc["menu_load3"].setString("load3(" + s3 + ")");
+                    ifstream in("saves/save" + to_string(i) + ".txt");
+                    string s;
+                    in >> s;
+                    UI_esc["menu_load" + to_string(i)].setString("load" + to_string(i) + "(" + s + ")");
+                }
 
                 for(auto &p : UI_esc) {
                     window.draw(p.second);
