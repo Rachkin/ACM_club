@@ -32,4 +32,12 @@
 # Executables
 *.exe
 *.out
+*.dll
 *.app
+
+# etc
+
+.idea
+.vscode
+cmake-build-debug
+SFML
