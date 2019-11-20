@@ -1,4 +1,4 @@
-//name type child speaker say background
+# name type child speaker say background
 main monolog hello inhead hello_world enterence
 hello monolog dio giorno giogio enterence
 dio monolog wry dio dio front

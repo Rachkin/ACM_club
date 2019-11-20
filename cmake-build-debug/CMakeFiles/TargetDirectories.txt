@@ -1,3 +1,0 @@
-/Users/vladimir/CLionProjects/ACM_club/cmake-build-debug/CMakeFiles/rebuild_cache.dir
-/Users/vladimir/CLionProjects/ACM_club/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/vladimir/CLionProjects/ACM_club/cmake-build-debug/CMakeFiles/ACM_club.dir

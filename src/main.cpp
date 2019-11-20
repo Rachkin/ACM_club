@@ -16,181 +16,134 @@ uint64_t timeSinceEpochMillisec() {
     return duration_cast<chrono::milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
-struct Screen{
-    string name;
-    string type;
-    string child;
-    string speaker;
-    string say;
-    string background;
-    Screen(){}
-    Screen(string name, string type, string child, string speaker, string say, string background):
-    name(name),type(type),child(child),speaker(speaker),say(say),background(background){}
+struct Screen {
+    std::string name;
+    std::string type;
+    std::string child;
+    std::string speaker;
+    std::string say;
+    std::string background;
+    Screen() { }
+    Screen(string name, string type, string child, string speaker, string say, string background) :
+        name(name), type(type), child(child), speaker(speaker), say(say), background(background) { }
 };
 
-struct Character{
-    string name;
-    string fio;
-    Character(){}
-    Character(string name, string fio):name(name),fio(fio){}
+struct Character {
+    std::string name;
+    std::string fullname;
+    Character() { }
+    Character(string name, string fullname) :
+        name(name), fullname(fullname) { }
 };
 
-RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y,32),"ACM club)");
+sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y,32), "ACM club)");
 
-map<string, Font> fonts;
-map<string, string> strings;
+std::map<string, Font> fonts;
+std::map<string, string> strings;
+std::map<string, Image> images;
+std::map<string, Texture> textures;
+std::map<string, Sprite> sprites;
+std::map<string, Screen> screens;
+std::map<string, Character> characters;
 
-map<string, Image> images;
-map<string, Texture> textures;
-map<string, Sprite> sprites;
+static void _readUntilSpace(const std::string& src, std::string& dst, int& pos) {
+    while(pos < src.size() && src[pos] != ' ') dst.push_back(src[pos++]);
+}
 
-map<string, Screen> screens;
+static void _readUntilEOL(const std::string& src, std::string& dst, int& pos) {
+    while(pos < src.size()) dst.push_back(src[pos++]);
+}
 
-map<string, Character> characters;
-
-void initTexts(){
-
+void initTexts() {
     fonts["arial"].loadFromFile("fonts/arial.ttf");
-
-    vector < string > text_files = {"texts/ui.txt"};
-
-    for(auto file : text_files) {
-        ifstream in(file);
-        string s;
-        while (getline(in, s)) {
-            if (s[0] == '/') continue;
-            string name;
+    std::vector<string> text_files = {"texts/ui.txt"};
+    for(const auto& file : text_files) {
+        std::ifstream in(file);
+        std::string s;
+        while (std::getline(in, s)) {
+            if (s[0] == '#') continue; // python-like comments
+            std::string name;
             int i = 0;
-            for (; s[i] != ' ' && i < s.size(); i++) {
-                name += s[i];
-            }
-            i++;
-            /////////
-            string text;
-            for(; i < s.size(); i++){
-                if(s[i] == '\\' && s[i+1] == 'n') {text += '\n'; i++;}
-                else text += s[i];
+            _readUntilSpace(s, name, i); ++i;
+
+            std::string text;
+            for(; i < s.size(); i++) {
+                if(s[i] == '\\') { 
+                    if(i + 1 < s.size() && s[i] == 'n')
+                        text.push_back('\n'); i++;
+                }
+                else text.push_back(s[i]);
             }
 
             strings[name] = text;
-           // cout << text;
         }
     }
-
-
-
 }
 
-void initSprites(){
-
-    ifstream in("images.txt");
-    string s;
-    while(getline(in, s)){
-        if(s[0] == '/') continue;
+void initSprites() {
+    std::ifstream in("data/images.txt"); // (!) './images.txt' moved to './data'
+    std::string s;
+    while(std::getline(in, s)) {
+        if(s.empty() || s.front() == '#') continue; // skip empty lines and python-like commented lines
         int i = 0;
-        string name;
-        for(; s[i] != ' '; i++) name += s[i];
-        i++;
-        string link;
-        for(; i < s.size(); i++) link += s[i];
+        std::string name, link;
+        _readUntilSpace(s, name, i); ++i;
+        _readUntilSpace(s, link, i);
+
         images[name].loadFromFile("images/" + link);
-
         textures[name].loadFromImage(images[name]);
-
         sprites[name].setTexture(textures[name]);
     }
-
 }
 
 void initScreens(){
-    ifstream in2("screens.txt");
-    string s;
-    while(getline(in2, s)){
-        if (s[0] == '/') continue;
+    std::ifstream in2("data/screens.txt"); // (!) './screens.txt' moved to './data'
+    std::string s;
+    while(std::getline(in2, s)) {
+        if (s.empty() || s.front() == '#') continue; // skip empty lines and python-like commented lines
         int i = 0;
-        string name;
-        for(; s[i] != ' ' && i < s.size(); i++){
-            name += s[i];
-        }
-        i++;
-        ///////////////
-        string type;
-        for(; s[i] != ' ' && i < s.size(); i++){
-            type += s[i];
-        }
-        i++;
-        ///////////////
-        string child;
-        for(; s[i] != ' ' && i < s.size(); i++){
-            child += s[i];
-        }
-        i++;
-        ///////////////
-        string speaker;
-        for(; s[i] != ' ' && i < s.size(); i++){
-            speaker += s[i];
-        }
-        i++;
-        ///////////////
-        string say;
-        for(; s[i] != ' ' && i < s.size(); i++){
-            say += s[i];
-        }
-        i++;
-        string background;
-        for(; s[i] != ' ' && i < s.size(); i++){
-            background += s[i];
-        }
-        i++;
+
+        std::string name, type, child, speaker, say, background;
+        _readUntilSpace(s, name, i);       ++i;
+        _readUntilSpace(s, type, i);       ++i;
+        _readUntilSpace(s, child, i);      ++i;
+        _readUntilSpace(s, speaker, i);    ++i;
+        _readUntilSpace(s, say, i);        ++i;
+        _readUntilSpace(s, background, i); ++i;
         screens[name] = Screen(name, type, child, speaker, say, background);
-        //cout << name << " " << type << endl;
     }
 }
 
-void initCharacters(){
-    ifstream in("characters.txt");
-    string s;
-    while(getline(in, s)){
-        if (s[0] == '/') continue;
+void initCharacters() {
+    std::ifstream in("data/characters.txt"); // (!) './characters.txt' moved to './data'
+    std::string s;
+    while(std::getline(in, s)) {
+        if (s.empty() || s.front() == '#') continue; // skip empty lines and python-like commented lines
         int i = 0;
-        string name;
-        for(; s[i] != ' ' && i < s.size(); i++){
-            name += s[i];
-        }
-        i++;
-        string fio;
-        for(; i < s.size(); i++){
-            fio += s[i];
-        }
-        i++;
-        characters[name] = Character(name, fio);
-        cout << fio;
+        std::string name, fullname;
+        _readUntilSpace(s, name, i);   ++i;
+        _readUntilEOL(s, fullname, i); ++i;
+        characters[name] = Character(name, fullname);
     }
 }
 
 int main() {
-
+    // Load data files
     initTexts();
     initSprites();
     initScreens();
     initCharacters();
 
     Screen current_screen = screens["main"];
-
     bool is_changed = 1;
 
-    int64_t start_time = timeSinceEpochMillisec();
-
-    int64_t textstart_time = timeSinceEpochMillisec();
-
-    int64_t next_time = timeSinceEpochMillisec();
-    int64_t d_next = 200;
-
-    int64_t string_shown = 0;
-
+    int64_t start_time        = timeSinceEpochMillisec();
+    int64_t textstart_time    = timeSinceEpochMillisec();
+    int64_t next_time         = timeSinceEpochMillisec();
+    int64_t d_next            = 200;
+    int64_t string_shown      = 0;
     int64_t string_will_shown = 0;
-
-    bool is_escaped = 0;
+    bool is_escaped = false;
 
     map < string, Text > UI_esc, UI_dialog;
 
@@ -248,7 +201,7 @@ int main() {
     }
 
 
-    while(window.isOpen()){
+    while(window.isOpen()) {
         sf::Event event;
         int64_t now_time = timeSinceEpochMillisec();
 
@@ -269,7 +222,7 @@ int main() {
                         textstart_time = -10000000;
                     }
                     is_changed = 1;
-                    cout << string_will_shown << endl;
+                    std::cout << string_will_shown << std::endl;
                 }
                 if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)) {
                     is_escaped = 1 - is_escaped;
@@ -309,7 +262,7 @@ int main() {
                     window.close();
                 }
                 if (UI_esc["menu_load1"].getGlobalBounds().contains(mouse)) {
-                    ifstream in("save.txt");
+                    ifstream in("saves/save.txt");
                     string s;
                     in >> s;
                     current_screen = screens[s];
@@ -317,7 +270,7 @@ int main() {
                     is_changed = 1;
                 }
                 if (UI_esc["menu_load2"].getGlobalBounds().contains(mouse)) {
-                    ifstream in("save2.txt");
+                    ifstream in("saves/save2.txt");
                     string s;
                     in >> s;
                     current_screen = screens[s];
@@ -325,7 +278,7 @@ int main() {
                     is_changed = 1;
                 }
                 if (UI_esc["menu_load3"].getGlobalBounds().contains(mouse)) {
-                    ifstream in("save3.txt");
+                    ifstream in("saves/save3.txt");
                     string s;
                     in >> s;
                     current_screen = screens[s];
@@ -333,19 +286,19 @@ int main() {
                     is_changed = 1;
                 }
                 if (UI_esc["menu_save1"].getGlobalBounds().contains(mouse)) {
-                    ofstream out("save.txt");
+                    ofstream out("saves/save.txt");
                     out << current_screen.name;
                     is_escaped = 0;
                     is_changed = 1;
                 }
                 if (UI_esc["menu_save2"].getGlobalBounds().contains(mouse)) {
-                    ofstream out("save2.txt");
+                    ofstream out("saves/save2.txt");
                     out << current_screen.name;
                     is_escaped = 0;
                     is_changed = 1;
                 }
                 if (UI_esc["menu_save3"].getGlobalBounds().contains(mouse)) {
-                    ofstream out("save3.txt");
+                    ofstream out("saves/save3.txt");
                     out << current_screen.name;
                     is_escaped = 0;
                     is_changed = 1;
@@ -354,11 +307,9 @@ int main() {
                     is_escaped = 0;
                     is_changed = 1;
                 }
-
             }
         }
-        if(is_escaped == 0){
-
+        if(is_escaped == 0) {
             for(auto &p : UI_dialog) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
                 if (bounds.contains(mouse)) {
@@ -400,7 +351,7 @@ int main() {
                 // sprites["backgrounds/back"].setScale(screenSize.x / sprites["backgrounds/back"].getLocalBounds().width, screenSize.y / sprites["backgrounds/back"].getLocalBounds().height);
                 //cout << current_screen.name;
                 Text speaker;
-                speaker.setString(characters[current_screen.speaker].fio);
+                speaker.setString(characters[current_screen.speaker].fullname);
                 speaker.setCharacterSize(30);
                 speaker.setFont(fonts["arial"]);
                 speaker.setColor(sf::Color::Black);
@@ -432,17 +383,17 @@ int main() {
 
                 window.draw(background);
 
-                ifstream in("save.txt");
+                ifstream in("saves/save.txt");
                 string s;
                 in >> s;
                 UI_esc["menu_load1"].setString("load1(" + s + ")");
 
-                ifstream in2("save2.txt");
+                ifstream in2("saves/save2.txt");
                 string s2;
                 in2 >> s2;
                 UI_esc["menu_load2"].setString("load2(" + s2 + ")");
 
-                ifstream in3("save3.txt");
+                ifstream in3("saves/save3.txt");
                 string s3;
                 in3 >> s3;
                 UI_esc["menu_load3"].setString("load3(" + s3 + ")");
