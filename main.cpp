@@ -86,6 +86,7 @@ void initSprites(){
     ifstream in("images.txt");
     string s;
     while(getline(in, s)){
+        if(s[0] == '/') continue;
         int i = 0;
         string name;
         for(; s[i] != ' '; i++) name += s[i];

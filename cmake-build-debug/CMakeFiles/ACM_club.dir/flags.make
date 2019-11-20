@@ -6,5 +6,5 @@ CXX_FLAGS =  -std=c++11 -g -isysroot /Applications/Xcode.app/Contents/Developer/
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/usr/local/include 
+CXX_INCLUDES = -I/Users/vladimir/CLionProjects/ACM_club/SFML/include 
 

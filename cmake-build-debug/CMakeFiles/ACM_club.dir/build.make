@@ -79,11 +79,11 @@ ACM_club_EXTERNAL_OBJECTS =
 
 ACM_club: CMakeFiles/ACM_club.dir/main.cpp.o
 ACM_club: CMakeFiles/ACM_club.dir/build.make
-ACM_club: /usr/local/lib/libsfml-system.dylib
-ACM_club: /usr/local/lib/libsfml-window.dylib
-ACM_club: /usr/local/lib/libsfml-graphics.dylib
-ACM_club: /usr/local/lib/libsfml-network.dylib
 ACM_club: /usr/local/lib/libsfml-audio.dylib
+ACM_club: /usr/local/lib/libsfml-graphics.dylib
+ACM_club: /usr/local/lib/libsfml-window.dylib
+ACM_club: /usr/local/lib/libsfml-system.dylib
+ACM_club: /usr/local/lib/libsfml-network.dylib
 ACM_club: CMakeFiles/ACM_club.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/vladimir/CLionProjects/ACM_club/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable ACM_club"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ACM_club.dir/link.txt --verbose=$(VERBOSE)
