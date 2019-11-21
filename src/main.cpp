@@ -1,4 +1,5 @@
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <map>
 #include <vector>
 #include <fstream>
@@ -148,6 +149,7 @@ int main() {
     int64_t textstart_time    = timeSinceEpochMillisec();
     int64_t next_time         = timeSinceEpochMillisec();
     int64_t d_next            = 200;
+    int text_speed = 50;
     int64_t string_shown      = 0;
     int64_t string_will_shown = 0;
     bool is_escaped = false;
@@ -202,7 +204,7 @@ int main() {
 
         while(window.pollEvent(event)) {
 
-            string_will_shown = min((int64_t)(now_time - textstart_time) / 100, (int64_t)strings[current_screen.say].size());
+            string_will_shown = min((int64_t)(now_time - textstart_time) / text_speed, (int64_t)strings[current_screen.say].size());
             if(next_time <= now_time) {
                 if (event.type == sf::Event::Closed) {
                     window.close();
@@ -211,7 +213,7 @@ int main() {
                     if (string_will_shown == (int) strings[current_screen.say].size()) {
                         if (current_screen.child == "-1") window.close();
                         current_screen = screens[current_screen.child];
-                        textstart_time = now_time + 100;
+                        textstart_time = now_time + d_next;
                     } else {
                         textstart_time = -10000000;
                     }
@@ -226,7 +228,9 @@ int main() {
             }
 
         }
-        string_will_shown = min((int64_t)(now_time - textstart_time) / 100, (int64_t)strings[current_screen.say].size());
+        string_will_shown = min((int64_t)(now_time - textstart_time) / text_speed, (int64_t)strings[current_screen.say].size());
+
+        string_will_shown = max(0ll, string_will_shown);
 
         if(string_will_shown != string_shown){
             is_changed = 1;
@@ -297,6 +301,11 @@ int main() {
                 if (UI_dialog["menu_botton"].getGlobalBounds().contains(mouse)) {
                     is_escaped = 1;
                     is_changed = 1;
+                   // sf::SoundBuffer buffer;
+                  //  buffer.loadFromFile("sounds/classic_hurt.mp3");
+                  //  sf::Sound sound;
+                  //  sound.setBuffer(buffer);
+                  //  sound.play();
                 }
             }
         }
@@ -357,7 +366,7 @@ int main() {
 
                 window.display();
                 is_changed = 0;
-            } else {
+            } if(is_escaped == 1) {
                 window.clear(Color::Black);
 
                 Sprite background = sprites["escmenu"];
