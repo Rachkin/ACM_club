@@ -189,12 +189,12 @@ int main() {
 
     for(auto &p : UI_esc){
         p.second.setFont(fonts["arial"]);
-        p.second.setColor(sf::Color::Black);
+        p.second.setFillColor(sf::Color::Black);
     }
 
     for(auto &p : UI_dialog){
         p.second.setFont(fonts["arial"]);
-        p.second.setColor(sf::Color::Black);
+        p.second.setFillColor(sf::Color::Black);
     }
 
 
@@ -346,7 +346,7 @@ int main() {
                 speaker.setString(characters[current_screen.speaker].fullname);
                 speaker.setCharacterSize(30);
                 speaker.setFont(fonts["arial"]);
-                speaker.setColor(sf::Color::Black);
+                speaker.setFillColor(sf::Color::Black);
                 speaker.setPosition(100,
                                     window.getSize().y - 120);
                 window.draw(speaker);
@@ -355,7 +355,7 @@ int main() {
                 say.setString(strings[current_screen.say].substr(0, string_shown));
                 say.setCharacterSize(20);
                 say.setFont(fonts["arial"]);
-                say.setColor(Color::Black);
+                say.setFillColor(Color::Black);
                 say.setPosition(120,
                                 window.getSize().y - 80); // - say.getGlobalBounds().height/2
                 window.draw(say);
