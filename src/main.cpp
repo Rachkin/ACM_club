@@ -7,6 +7,9 @@
 #include <chrono>
 #include <cstdint>
 
+#include <lua.hpp>
+#include <LuaBridge/LuaBridge.h>
+
 using namespace std;
 using namespace sf;
 

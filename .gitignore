@@ -41,4 +41,6 @@
 .vscode
 cmake-build-debug
 SFML
+Lua
+LuaBridge
 build
