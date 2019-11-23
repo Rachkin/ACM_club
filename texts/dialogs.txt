@@ -1,4 +1,4 @@
-//name text
+# name text
 hello_world Hello, world!
 giogio Hello, I am Giorno Giovana.\nI have a dream.
 dio Kono dio da
