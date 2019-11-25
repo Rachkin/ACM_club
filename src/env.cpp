@@ -25,6 +25,8 @@ Environment::Environment() : render_type(RenderType::Game) {
 
 void Environment::initTexts() {
     using namespace std;
+    render_type = RenderType::Lobby;
+
     fonts["arial"].loadFromFile("fonts/arial.ttf");
     vector<string> text_files = {"texts/ui.txt", "texts/dialogs.txt"};
     for(const auto& file : text_files) {

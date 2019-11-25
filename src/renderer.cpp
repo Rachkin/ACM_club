@@ -49,6 +49,11 @@ Renderer::Renderer(sf::Vector2f _screenSize, Environment* _env){
         p.second.setFillColor(sf::Color::Black);
     }
 
+    for(auto &p : UI_lobby){
+        p.second.setFont(env->fonts["arial"]);
+        p.second.setFillColor(sf::Color::Black);
+    }
+
 }
 
 void Renderer::draw(){
@@ -123,7 +128,22 @@ void Renderer::draw(){
     }
     else if(env->render_type == RenderType::Lobby) {
         // TODO: Generate okay lobby
-        window.display();
+        std::cout << "lobby" << std::endl;
+        sf::Sprite background = env->sprites["lobby"];
+        background.setScale(screenSize.x / background.getLocalBounds().width,
+                            screenSize.y / background.getLocalBounds().height);
+        window.draw(background);
+
+        sf::Text name_of_game;
+        name_of_game.setString("ACM club in SFU");
+        name_of_game.setCharacterSize(50);
+        name_of_game.setPosition(70, 100);
+        name_of_game.setFont(env->fonts["arial"]);
+        name_of_game.setFillColor(sf::Color::Black);
+        window.draw(name_of_game);
+
+        for(auto &p : UI_lobby)
+            window.draw(p.second);
     }
 
     window.display();

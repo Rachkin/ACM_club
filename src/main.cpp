@@ -7,8 +7,8 @@
 #include <chrono>
 #include <cstdint>
 
-#include <lua.hpp>
-#include <LuaBridge/LuaBridge.h>
+//#include <lua.hpp>
+//#include <LuaBridge/LuaBridge.h>
 
 #include "env.hpp"
 #include "renderer.hpp"
@@ -56,7 +56,7 @@ int main() {
                 if (event.type == sf::Event::Closed) {
                     renderer->window.close();
                 }
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space || event.key.code == sf::Mouse::Left)) {
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space || sf::Mouse::isButtonPressed(sf::Mouse::Left))) {
                     if (string_will_shown == (int) env->strings[env->screen.say].size()) {
                         // TODO: make LUA script
                         //if (env->screen.child == "-1") window.close();
@@ -160,9 +160,21 @@ int main() {
                   //  sound.play();
                 }
             }
+        } else if(env->render_type == RenderType::Lobby){
+            for(auto &p : renderer->UI_lobby) {
+                sf::FloatRect bounds = p.second.getGlobalBounds();
+                if (bounds.contains(mouse)) {
+                    if (p.second.getFillColor() == Color::Black) is_changed = 1;
+                    p.second.setFillColor(Color::Red);
+                }
+                else {
+                    if (p.second.getFillColor() == Color::Red) is_changed = 1;
+                    p.second.setFillColor(Color::Black);
+                }
+            }
         }
 
-        if(is_changed) {
+        if(is_changed){
             renderer->draw();
             is_changed = 0;
         }

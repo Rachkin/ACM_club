@@ -11,6 +11,7 @@
 #include <vector>
 #include <map>
 #include <fstream>
+#include <iostream>
 #include "env.hpp"
 
 #include <SFML/Graphics.hpp>
@@ -22,7 +23,7 @@ struct Renderer{
 
     sf::RenderWindow window;
 
-    std::map < std::string, sf::Text > UI_esc, UI_dialog, UI_menu;
+    std::map < std::string, sf::Text > UI_esc, UI_dialog, UI_lobby;
 
     Renderer(sf::Vector2f, Environment*);
 
