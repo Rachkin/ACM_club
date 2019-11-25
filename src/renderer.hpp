@@ -11,7 +11,6 @@
 #include <vector>
 #include <map>
 #include <fstream>
-#include <iostream>
 #include "env.hpp"
 
 #include <SFML/Graphics.hpp>

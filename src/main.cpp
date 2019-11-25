@@ -36,11 +36,12 @@ int main() {
     env->screen.speaker    = "giorno";
     env->screen.type       = ScreenType::Monolog;
 
-    bool is_changed = 1;
     int64_t start_time        = timeSinceEpochMillisec();
     int64_t textstart_time    = timeSinceEpochMillisec();
     int64_t next_time         = timeSinceEpochMillisec();
+    int64_t update_time       = timeSinceEpochMillisec();
     int64_t d_next            = 50;
+    int64_t d_update          = 1000/30;
     int text_speed            = 100;
     int64_t string_will_shown = 0;
 
@@ -65,13 +66,11 @@ int main() {
                     } else {
                         textstart_time = -10000000;
                     }
-                    is_changed = 1;
 
                 }
                 if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)) {
                          if(env->render_type == RenderType::Pause) env->render_type = RenderType::Game;
                     else if(env->render_type == RenderType::Game)  env->render_type = RenderType::Pause;
-                    is_changed = 1;
                 }
                 next_time = now_time + d_next;
             }
@@ -81,7 +80,6 @@ int main() {
         string_will_shown = max(0ll, string_will_shown);
 
         if(string_will_shown != env->string_shown){
-            is_changed = 1;
             env->string_shown = string_will_shown;
         }
 
@@ -91,14 +89,10 @@ int main() {
         if(env->render_type == RenderType::Pause) {
             for(auto &p : renderer->UI_esc) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
-                if (bounds.contains(mouse)) {
-                    if (p.second.getFillColor() == Color::Black) is_changed = 1;
+                if (bounds.contains(mouse))
                     p.second.setFillColor(Color::Red);
-                }
-                else {
-                    if (p.second.getFillColor() == Color::Red) is_changed = 1;
+                else
                     p.second.setFillColor(Color::Black);
-                }
 
             }
 
@@ -116,7 +110,6 @@ int main() {
                         in >> s;
                         env->screen = env->screens[s];
                         env->render_type = RenderType::Game;
-                        is_changed = 1;
                     }
                 }
                 for(int i = 1; i <= 3; i++) {
@@ -124,35 +117,28 @@ int main() {
                         ofstream out("saves/save" + to_string(i) + ".txt");
                         out << env->screen.name;
                         env->render_type = RenderType::Game;
-                        is_changed = 1;
                     }
                 }
                 */
 
                 if (renderer->UI_esc["menu_resume"].getGlobalBounds().contains(mouse)) {
                     env->render_type = RenderType::Game;
-                    is_changed = 1;
                 }
             }
         }
         else if(env->render_type == RenderType::Game) {
             for(auto &p : renderer->UI_dialog) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
-                if (bounds.contains(mouse)) {
-                    if (p.second.getFillColor() == Color::Black) is_changed = 1;
+                if (bounds.contains(mouse))
                     p.second.setFillColor(Color::Red);
-                }
-                else {
-                    if (p.second.getFillColor() == Color::Red) is_changed = 1;
+                else
                     p.second.setFillColor(Color::Black);
-                }
 
             }
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 if (renderer->UI_dialog["menu_botton"].getGlobalBounds().contains(mouse)) {
                     env->render_type = RenderType::Pause;
-                    is_changed = 1;
                    // sf::SoundBuffer buffer;
                   //  buffer.loadFromFile("sounds/classic_hurt.mp3");
                   //  sf::Sound sound;
@@ -163,20 +149,16 @@ int main() {
         } else if(env->render_type == RenderType::Lobby){
             for(auto &p : renderer->UI_lobby) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
-                if (bounds.contains(mouse)) {
-                    if (p.second.getFillColor() == Color::Black) is_changed = 1;
+                if (bounds.contains(mouse))
                     p.second.setFillColor(Color::Red);
-                }
-                else {
-                    if (p.second.getFillColor() == Color::Red) is_changed = 1;
+                else
                     p.second.setFillColor(Color::Black);
-                }
             }
         }
 
-        if(is_changed){
+        if(now_time > update_time){
             renderer->draw();
-            is_changed = 0;
+            update_time = now_time + d_update;
         }
 
     }

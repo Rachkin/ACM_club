@@ -128,7 +128,6 @@ void Renderer::draw(){
     }
     else if(env->render_type == RenderType::Lobby) {
         // TODO: Generate okay lobby
-        std::cout << "lobby" << std::endl;
         sf::Sprite background = env->sprites["lobby"];
         background.setScale(screenSize.x / background.getLocalBounds().width,
                             screenSize.y / background.getLocalBounds().height);
