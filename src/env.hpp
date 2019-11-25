@@ -44,6 +44,7 @@ struct Environment {
     std::map<std::string, sf::Texture> textures;
     std::map<std::string, sf::Sprite>  sprites;
     std::map<std::string, Character>   characters;
+    int64_t string_shown;
 
     Environment();
 

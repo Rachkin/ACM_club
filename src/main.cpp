@@ -7,25 +7,26 @@
 #include <chrono>
 #include <cstdint>
 
-#include <lua.hpp>
-#include <LuaBridge/LuaBridge.h>
+//#include <Lua/lua.hpp>
+//#include <LuaBridge/LuaBridge.h>
 
 #include "env.hpp"
+#include "renderer.hpp"
 
 using namespace std;
 using namespace sf;
-
-sf::Vector2f screenSize(800.0f, 600.0f);
 
 uint64_t timeSinceEpochMillisec() {
     using namespace std::chrono;
     return duration_cast<chrono::milliseconds>(system_clock::now().time_since_epoch()).count();
 }
 
-sf::RenderWindow window(sf::VideoMode(screenSize.x, screenSize.y,32), "ACM club)");
+sf::Vector2f screenSize(800.0f, 600.0f);
+
 
 int main() {
     Environment* env = new Environment();
+    Renderer* renderer = new Renderer(screenSize, env);
 
     env->screen.background = "front";
     env->screen.characters = {"dio"};
@@ -39,62 +40,19 @@ int main() {
     int64_t next_time         = timeSinceEpochMillisec();
     int64_t d_next            = 200;
     int text_speed            = 50;
-    int64_t string_shown      = 0;
     int64_t string_will_shown = 0;
-    map < string, Text > UI_esc, UI_dialog;
-
-    UI_esc["menu_label"].setString("MENU");
-    UI_esc["menu_label"].setCharacterSize(40);
-    UI_esc["menu_label"].setPosition(100,70);
 
 
-    UI_esc["menu_resume"].setString("resume");
-    UI_esc["menu_resume"].setCharacterSize(30);
-    UI_esc["menu_resume"].setPosition(120,120);
-
-    for(int i = 1; i <= 3; i++){
-        UI_esc["menu_load" + to_string(i)].setString("load" + to_string(i));
-        UI_esc["menu_load" + to_string(i)].setCharacterSize(30);
-        UI_esc["menu_load" + to_string(i)].setPosition(120,150 + (i - 1) * 30);
-    }
-
-    for(int i = 1; i <= 3; i++) {
-        UI_esc["menu_save" + to_string(i)].setString("save" + to_string(i));
-        UI_esc["menu_save" + to_string(i)].setCharacterSize(30);
-        UI_esc["menu_save" + to_string(i)].setPosition(300, 150 + (i - 1) * 30);
-    }
-
-    UI_esc["menu_exit"].setString("!exit game!");
-    UI_esc["menu_exit"].setCharacterSize(30);
-    UI_esc["menu_exit"].setPosition(120,300);
-
-
-    UI_dialog["menu_botton"].setString("menu");
-    UI_dialog["menu_botton"].setCharacterSize(30);
-    UI_dialog["menu_botton"].setPosition(20,window.getSize().y - 50);
-
-
-    for(auto &p : UI_esc){
-        p.second.setFont(env->fonts["arial"]);
-        p.second.setFillColor(sf::Color::Black);
-    }
-
-    for(auto &p : UI_dialog){
-        p.second.setFont(env->fonts["arial"]);
-        p.second.setFillColor(sf::Color::Black);
-    }
-
-
-    while(window.isOpen()) {
+    while(renderer->window.isOpen()) {
         sf::Event event;
         int64_t now_time = timeSinceEpochMillisec();
 
-        while(window.pollEvent(event)) {
+        while(renderer->window.pollEvent(event)) {
 
             string_will_shown = min((int64_t)(now_time - textstart_time) / text_speed, (int64_t)env->strings[env->screen.say].size());
             if(next_time <= now_time) {
                 if (event.type == sf::Event::Closed) {
-                    window.close();
+                    renderer->window.close();
                 }
                 if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) {
                     if (string_will_shown == (int) env->strings[env->screen.say].size()) {
@@ -120,9 +78,9 @@ int main() {
         string_will_shown = min((int64_t)(now_time - textstart_time) / text_speed, (int64_t)env->strings[env->screen.say].size());
         string_will_shown = max(0ll, string_will_shown);
 
-        if(string_will_shown != string_shown){
+        if(string_will_shown != env->string_shown){
             is_changed = 1;
-            string_shown = string_will_shown;
+            env->string_shown = string_will_shown;
         }
 
         sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
@@ -203,81 +161,8 @@ int main() {
         }
 
         if(is_changed) {
-            window.clear(Color::Black);
-
-            if(env->render_type == RenderType::Game) {
-                Sprite background = env->sprites[env->screen.background];
-                background.setScale(screenSize.x / background.getLocalBounds().width,
-                                    (screenSize.y-130) / background.getLocalBounds().height);
-
-                window.draw(background);
-
-                int i = 0;
-
-                for(auto c : env->screen.characters){
-                    Sprite character = env->sprites[c];
-                    double k = 0;
-                    if(c == env->screen.speaker) k = 0.8;
-                        else k = 0.7;
-                    character.setScale(screenSize.y / character.getLocalBounds().height * k,
-                                       screenSize.y / character.getLocalBounds().height * k);
-                    character.setPosition((i+1) * screenSize.x / (env->screen.characters.size()+1) - character.getGlobalBounds().width/2,
-                            screenSize.y/2 - character.getGlobalBounds().height/2);
-                    window.draw(character);
-                    i++;
-                }
-
-                Sprite dialog = env->sprites["dialog"];
-                dialog.setScale(screenSize.x / dialog.getLocalBounds().width,
-                                (130) / dialog.getLocalBounds().height);
-                dialog.setPosition(0, screenSize.y - 130);
-
-                window.draw(dialog);
-
-                Text speaker;
-                speaker.setString(env->characters[env->screen.speaker].fullname);
-                speaker.setCharacterSize(30);
-                speaker.setFont(env->fonts["arial"]);
-                speaker.setFillColor(sf::Color::Black);
-                speaker.setPosition(100,
-                                    window.getSize().y - 120);
-                window.draw(speaker);
-
-                Text say;
-                say.setString(env->strings[env->screen.say].substr(0, string_shown));
-                say.setCharacterSize(20);
-                say.setFont(env->fonts["arial"]);
-                say.setFillColor(Color::Black);
-                say.setPosition(120,
-                                window.getSize().y - 80); // - say.getGlobalBounds().height/2
-                window.draw(say);
-
-                for(auto &p : UI_dialog)
-                    window.draw(p.second);
-            } 
-            else if(env->render_type == RenderType::Pause) {
-                Sprite background = env->sprites["escmenu"];
-                background.setScale(screenSize.x / background.getLocalBounds().width,
-                                    screenSize.y / background.getLocalBounds().height);
-                window.draw(background);
-
-                for(int i = 1; i <= 3; i++) {
-                    ifstream in("saves/save" + to_string(i) + ".txt");
-                    string s;
-                    in >> s;
-                    UI_esc["menu_load" + to_string(i)].setString("load" + to_string(i) + "(" + s + ")");
-                }
-
-                for(auto &p : UI_esc) 
-                    window.draw(p.second);
-            }
-            else if(env->render_type == RenderType::Lobby) {
-                // TODO: Generate okay lobby
-                window.display();
-            }
-
-            is_changed = false;
-            window.display();
+            renderer.draw();
+            is_changed = 0;
         }
 
     }
