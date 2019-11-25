@@ -112,10 +112,10 @@ void Renderer::draw(){
         window.draw(background);
 
         for(int i = 1; i <= 3; i++) {
-            ifstream in("saves/save" + to_string(i) + ".txt");
-            string s;
+            std::ifstream in("saves/save" + std::to_string(i) + ".txt");
+            std::string s;
             in >> s;
-            UI_esc["menu_load" + to_string(i)].setString("load" + to_string(i) + "(" + s + ")");
+            UI_esc["menu_load" + std::to_string(i)].setString("load" + std::to_string(i) + "(" + s + ")");
         }
 
         for(auto &p : UI_esc)

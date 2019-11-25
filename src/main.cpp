@@ -7,8 +7,8 @@
 #include <chrono>
 #include <cstdint>
 
-//#include <Lua/lua.hpp>
-//#include <LuaBridge/LuaBridge.h>
+#include <lua.hpp>
+#include <LuaBridge/LuaBridge.h>
 
 #include "env.hpp"
 #include "renderer.hpp"
@@ -29,17 +29,17 @@ int main() {
     Renderer* renderer = new Renderer(screenSize, env);
 
     env->screen.background = "front";
-    env->screen.characters = {"dio"};
+    env->screen.characters = {"giorno"};
     env->screen.say        = "wry";
-    env->screen.speaker    = "dio";
+    env->screen.speaker    = "giorno";
     env->screen.type       = ScreenType::Monolog;
 
     bool is_changed = 1;
     int64_t start_time        = timeSinceEpochMillisec();
     int64_t textstart_time    = timeSinceEpochMillisec();
     int64_t next_time         = timeSinceEpochMillisec();
-    int64_t d_next            = 200;
-    int text_speed            = 50;
+    int64_t d_next            = 50;
+    int text_speed            = 100;
     int64_t string_will_shown = 0;
 
 
@@ -54,7 +54,7 @@ int main() {
                 if (event.type == sf::Event::Closed) {
                     renderer->window.close();
                 }
-                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space)) {
+                if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space || event.key.code == sf::Mouse::Left)) {
                     if (string_will_shown == (int) env->strings[env->screen.say].size()) {
                         // TODO: make LUA script
                         //if (env->screen.child == "-1") window.close();
@@ -83,11 +83,11 @@ int main() {
             env->string_shown = string_will_shown;
         }
 
-        sf::Vector2f mouse = window.mapPixelToCoords(sf::Mouse::getPosition(window));
+        sf::Vector2f mouse = renderer->window.mapPixelToCoords(sf::Mouse::getPosition(renderer->window));
 
         // hit test6
         if(env->render_type == RenderType::Pause) {
-            for(auto &p : UI_esc) {
+            for(auto &p : renderer->UI_esc) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
                 if (bounds.contains(mouse)) {
                     if (p.second.getFillColor() == Color::Black) is_changed = 1;
@@ -102,8 +102,8 @@ int main() {
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 // transform the mouse position from window coordinates to world coordinates
-                if (UI_esc["menu_exit"].getGlobalBounds().contains(mouse)) {
-                    window.close();
+                if (renderer->UI_esc["menu_exit"].getGlobalBounds().contains(mouse)) {
+                    renderer->window.close();
                 }
                 // TODO: Make saves for scripts
                 /*
@@ -127,14 +127,14 @@ int main() {
                 }
                 */
 
-                if (UI_esc["menu_resume"].getGlobalBounds().contains(mouse)) {
+                if (renderer->UI_esc["menu_resume"].getGlobalBounds().contains(mouse)) {
                     env->render_type = RenderType::Game;
                     is_changed = 1;
                 }
             }
         }
         else if(env->render_type == RenderType::Game) {
-            for(auto &p : UI_dialog) {
+            for(auto &p : renderer->UI_dialog) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
                 if (bounds.contains(mouse)) {
                     if (p.second.getFillColor() == Color::Black) is_changed = 1;
@@ -148,7 +148,7 @@ int main() {
             }
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                if (UI_dialog["menu_botton"].getGlobalBounds().contains(mouse)) {
+                if (renderer->UI_dialog["menu_botton"].getGlobalBounds().contains(mouse)) {
                     env->render_type = RenderType::Pause;
                     is_changed = 1;
                    // sf::SoundBuffer buffer;
@@ -161,7 +161,7 @@ int main() {
         }
 
         if(is_changed) {
-            renderer.draw();
+            renderer->draw();
             is_changed = 0;
         }
 

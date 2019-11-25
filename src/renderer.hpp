@@ -10,6 +10,7 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <fstream>
 #include "env.hpp"
 
 #include <SFML/Graphics.hpp>
