@@ -12,6 +12,8 @@
 
 #include "env.hpp"
 #include "renderer.hpp"
+#include "script.hpp"
+#include "acmp.hpp"
 
 using namespace std;
 using namespace sf;
