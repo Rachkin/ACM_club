@@ -7,8 +7,8 @@
 #include <chrono>
 #include <cstdint>
 
-//#include <lua.hpp>
-//#include <LuaBridge/LuaBridge.h>
+#include <lua.hpp>
+#include <LuaBridge/LuaBridge.h>
 
 #include "env.hpp"
 #include "renderer.hpp"
@@ -27,23 +27,27 @@ sf::Vector2f screenSize(800.0f, 600.0f);
 
 
 int main() {
-    Environment* env = new Environment();
+    Environment* env   = new Environment();
     Renderer* renderer = new Renderer(screenSize, env);
-
+    Script* script     = new Script(env);
+/*
     env->screen.background = "front";
     env->screen.characters = {"giorno"};
     env->screen.say        = "wry";
     env->screen.speaker    = "giorno";
     env->screen.type       = ScreenType::Monolog;
+    */
 
-    int64_t start_time        = timeSinceEpochMillisec();
-    int64_t textstart_time    = timeSinceEpochMillisec();
-    int64_t next_time         = timeSinceEpochMillisec();
-    int64_t update_time       = timeSinceEpochMillisec();
     int64_t d_next            = 50;
-    int64_t d_update          = 1000/30;
+    int64_t d_update          = 1000/10;
     int text_speed            = 100;
     int64_t string_will_shown = 0;
+
+    int64_t start_time        = timeSinceEpochMillisec();
+    int64_t textstart_time    = timeSinceEpochMillisec() + d_next;
+    int64_t next_time         = timeSinceEpochMillisec();
+    int64_t update_time       = timeSinceEpochMillisec();
+
 
 
     while(renderer->window.isOpen()) {
@@ -61,8 +65,8 @@ int main() {
                     if (string_will_shown == (int) env->strings[env->screen.say].size()) {
                         // TODO: make LUA script
                         //if (env->screen.child == "-1") window.close();
-                        //env->screen = screens[env->screen.child];
-                        //textstart_time = now_time + d_next;
+                        script->next(1);
+                        textstart_time = now_time + d_next;
                     } else {
                         textstart_time = -10000000;
                     }
@@ -98,7 +102,7 @@ int main() {
 
             if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
                 // transform the mouse position from window coordinates to world coordinates
-                if (renderer->UI_esc["menu_exit"].getGlobalBounds().contains(mouse)) {
+                if (renderer->UI_esc["exit"].getGlobalBounds().contains(mouse)) {
                     renderer->window.close();
                 }
                 // TODO: Make saves for scripts
@@ -121,7 +125,7 @@ int main() {
                 }
                 */
 
-                if (renderer->UI_esc["menu_resume"].getGlobalBounds().contains(mouse)) {
+                if (renderer->UI_esc["resume"].getGlobalBounds().contains(mouse)) {
                     env->render_type = RenderType::Game;
                 }
             }
@@ -135,17 +139,6 @@ int main() {
                     p.second.setFillColor(Color::Black);
 
             }
-
-            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
-                if (renderer->UI_dialog["menu_botton"].getGlobalBounds().contains(mouse)) {
-                    env->render_type = RenderType::Pause;
-                   // sf::SoundBuffer buffer;
-                  //  buffer.loadFromFile("sounds/classic_hurt.mp3");
-                  //  sf::Sound sound;
-                  //  sound.setBuffer(buffer);
-                  //  sound.play();
-                }
-            }
         } else if(env->render_type == RenderType::Lobby){
             for(auto &p : renderer->UI_lobby) {
                 sf::FloatRect bounds = p.second.getGlobalBounds();
@@ -153,6 +146,15 @@ int main() {
                     p.second.setFillColor(Color::Red);
                 else
                     p.second.setFillColor(Color::Black);
+            }
+
+            if (sf::Mouse::isButtonPressed(sf::Mouse::Left)) {
+                // transform the mouse position from window coordinates to world coordinates
+                if (renderer->UI_lobby["new_game"].getGlobalBounds().contains(mouse)) {
+                    script->new_game();
+                    textstart_time = now_time;
+                    env->render_type = RenderType::Game;
+                }
             }
         }
 

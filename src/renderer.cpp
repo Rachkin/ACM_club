@@ -9,35 +9,39 @@ Renderer::Renderer(sf::Vector2f _screenSize, Environment* _env){
     screenSize = _screenSize;
     window.create(sf::VideoMode(screenSize.x, screenSize.y,32), "ACM club)");
 
-    UI_esc["menu_label"].setString("MENU");
-    UI_esc["menu_label"].setCharacterSize(40);
-    UI_esc["menu_label"].setPosition(100,70);
+    UI_esc["label"].setString("MENU");
+    UI_esc["label"].setCharacterSize(40);
+    UI_esc["label"].setPosition(100,70);
 
 
-    UI_esc["menu_resume"].setString("resume");
-    UI_esc["menu_resume"].setCharacterSize(30);
-    UI_esc["menu_resume"].setPosition(120,120);
+    UI_esc["resume"].setString("resume");
+    UI_esc["resume"].setCharacterSize(30);
+    UI_esc["resume"].setPosition(120,120);
 
     for(int i = 1; i <= 3; i++){
-        UI_esc["menu_load" + std::to_string(i)].setString("load" + std::to_string(i));
-        UI_esc["menu_load" + std::to_string(i)].setCharacterSize(30);
-        UI_esc["menu_load" + std::to_string(i)].setPosition(120,150 + (i - 1) * 30);
+        UI_esc["load" + std::to_string(i)].setString("load" + std::to_string(i));
+        UI_esc["load" + std::to_string(i)].setCharacterSize(30);
+        UI_esc["load" + std::to_string(i)].setPosition(120,150 + (i - 1) * 30);
     }
 
     for(int i = 1; i <= 3; i++) {
-        UI_esc["menu_save" + std::to_string(i)].setString("save" + std::to_string(i));
-        UI_esc["menu_save" + std::to_string(i)].setCharacterSize(30);
-        UI_esc["menu_save" + std::to_string(i)].setPosition(300, 150 + (i - 1) * 30);
+        UI_esc["save" + std::to_string(i)].setString("save" + std::to_string(i));
+        UI_esc["msave" + std::to_string(i)].setCharacterSize(30);
+        UI_esc["msave" + std::to_string(i)].setPosition(300, 150 + (i - 1) * 30);
     }
 
-    UI_esc["menu_exit"].setString("!exit game!");
-    UI_esc["menu_exit"].setCharacterSize(30);
-    UI_esc["menu_exit"].setPosition(120,300);
+    UI_esc["exit"].setString("!exit game!");
+    UI_esc["exit"].setCharacterSize(30);
+    UI_esc["exit"].setPosition(120,300);
 
 
-    UI_dialog["menu_botton"].setString("menu");
-    UI_dialog["menu_botton"].setCharacterSize(30);
-    UI_dialog["menu_botton"].setPosition(20,window.getSize().y - 50);
+    UI_dialog["botton"].setString("menu");
+    UI_dialog["botton"].setCharacterSize(30);
+    UI_dialog["botton"].setPosition(20,window.getSize().y - 50);
+
+    UI_lobby["new_game"].setString("new game");
+    UI_lobby["new_game"].setCharacterSize(40);
+    UI_lobby["new_game"].setPosition(100, 200);
 
     for(auto &p : UI_esc){
         p.second.setFont(env->fonts["arial"]);
@@ -120,7 +124,7 @@ void Renderer::draw(){
             std::ifstream in("saves/save" + std::to_string(i) + ".txt");
             std::string s;
             in >> s;
-            UI_esc["menu_load" + std::to_string(i)].setString("load" + std::to_string(i) + "(" + s + ")");
+            UI_esc["load" + std::to_string(i)].setString("load" + std::to_string(i) + "(" + s + ")");
         }
 
         for(auto &p : UI_esc)
