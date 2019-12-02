@@ -4,11 +4,7 @@
 
 #include "renderer.hpp"
 
-Renderer::Renderer(sf::Vector2f _screenSize, Environment* _env){
-    env = _env;
-    screenSize = _screenSize;
-    window.create(sf::VideoMode(screenSize.x, screenSize.y,32), "ACM club)");
-
+void Renderer::initTexts(){
     UI_pause["resume"].setString("resume");
     UI_pause["resume"].setCharacterSize(30);
     UI_pause["resume"].setPosition(120,120);
@@ -37,19 +33,35 @@ Renderer::Renderer(sf::Vector2f _screenSize, Environment* _env){
 
     UI_game["menu_button"].setString("menu");
     UI_game["menu_button"].setCharacterSize(30);
-    UI_game["menu_button"].setPosition(20,window.getSize().y - 50);
+    UI_game["menu_button"].setPosition(20, screenSize.y - 50);
 
     ///////////////////
 
     UI_lobby["new_game"].setString("new game");
     UI_lobby["new_game"].setCharacterSize(40);
     UI_lobby["new_game"].setPosition(100, 200);
-
+/*
+    UI_lobby["settings"].setString("settings");
+    UI_lobby["settings"].setCharacterSize(40);
+    UI_lobby["settings"].setPosition(100, 240);
+*/
     //////////////////
 
     UI_settings["resume"].setString("resume");
     UI_settings["resume"].setCharacterSize(30);
     UI_settings["resume"].setPosition(120,120);
+
+    UI_settings["fullscreen"].setString("fullscreen");
+    UI_settings["fullscreen"].setCharacterSize(30);
+    UI_settings["fullscreen"].setPosition(120,150);
+
+    UI_settings["fullscreen_bordered"].setString("fullscreen(bordered)");
+    UI_settings["fullscreen_bordered"].setCharacterSize(30);
+    UI_settings["fullscreen_bordered"].setPosition(120,180);
+
+    UI_settings["defaultscreen"].setString("default screen");
+    UI_settings["defaultscreen"].setCharacterSize(30);
+    UI_settings["defaultscreen"].setPosition(120,210);
 
     for(auto &p : UI_pause){
         p.second.setFont(env->fonts["arial"]);
@@ -75,8 +87,15 @@ Renderer::Renderer(sf::Vector2f _screenSize, Environment* _env){
         p.second.setFont(env->fonts["arial"]);
         p.second.setFillColor(sf::Color::Black);
     }
-
 }
+
+Renderer::Renderer(Environment* _env){
+    env = _env;
+    make_defaultscreen();
+    initTexts();
+}
+
+
 
 void Renderer::draw(){
 
@@ -96,10 +115,10 @@ void Renderer::draw(){
             double k = 0;
             if(c == env->screen.speaker) k = 0.8;
             else k = 0.7;
-            character.setScale(screenSize.y / character.getLocalBounds().height * k,
-                               screenSize.y / character.getLocalBounds().height * k);
-            character.setPosition((i+1) * screenSize.x / (env->screen.characters.size()+1) - character.getGlobalBounds().width/2,
-                                  screenSize.y/2 - character.getGlobalBounds().height/2);
+            character.setScale(window.getSize().y / character.getLocalBounds().height * k,
+                               window.getSize().y / character.getLocalBounds().height * k);
+            character.setPosition((i+1) * window.getSize().x / (env->screen.characters.size()+1) - character.getGlobalBounds().width/2,
+                                  window.getSize().y/2 - character.getGlobalBounds().height/2);
             window.draw(character);
             i++;
         }
@@ -107,7 +126,7 @@ void Renderer::draw(){
         sf::Sprite dialog = env->sprites["dialog"];
         dialog.setScale(screenSize.x / dialog.getLocalBounds().width,
                         (130) / dialog.getLocalBounds().height);
-        dialog.setPosition(0, screenSize.y - 130);
+        dialog.setPosition(0, window.getSize().y - 130);
 
         window.draw(dialog);
 
@@ -197,4 +216,22 @@ void Renderer::draw(){
     }
 
     window.display();
+}
+
+void Renderer::make_defaultscreen(){
+    screenSize = screen800;
+    window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name, sf::Style::Resize);
+    initTexts();
+}
+
+void Renderer::make_fullscreen(){
+    screenSize = sf::Vector2f(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+    window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name, sf::Style::Fullscreen);
+    initTexts();
+}
+
+void Renderer::make_fullscreen_bordered(){
+    screenSize = sf::Vector2f(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+    window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name);
+    initTexts();
 }

@@ -1,3 +1,4 @@
 -- Global variables
 
-GlobalVariable1 = 0
+babin = 0
+txt = 0

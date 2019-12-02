@@ -19,13 +19,16 @@ static void _readUntilEOL(const std::string& src, std::string& dst, int& pos) {
     while(pos < src.size()) dst.push_back(src[pos++]);
 }
 
-Environment::Environment() : render_type(RenderType::Game) {
+Environment::Environment() : render_type(RenderType::Lobby) {
+    initTexts(), initSprites(), initCharacters();
+}
+
+Environment::Environment(RenderType render_type) : render_type(render_type) {
     initTexts(), initSprites(), initCharacters();
 }
 
 void Environment::initTexts() {
     using namespace std;
-    render_type = RenderType::Lobby;
 
     fonts["arial"].loadFromFile("fonts/arial.ttf");
     vector<string> text_files = {"texts/ui.txt", "texts/dialogs.txt"};

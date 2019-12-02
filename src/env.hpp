@@ -36,6 +36,7 @@ enum class RenderType {
 
 struct Environment {
     RenderType render_type;
+    RenderType pre_render_type;
 
     Screen screen;
     std::map<std::string, sf::Font>    fonts;
@@ -47,6 +48,7 @@ struct Environment {
     int64_t string_shown;
 
     Environment();
+    Environment(RenderType);
 
 private:
     void initTexts();
