@@ -31,7 +31,7 @@ struct Screen {
 };
 
 enum class RenderType {
-    Lobby, Game, Pause
+    Lobby, Game, Pause, Acmp, Settings
 };
 
 struct Environment {

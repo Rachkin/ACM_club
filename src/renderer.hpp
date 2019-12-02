@@ -22,7 +22,7 @@ struct Renderer{
 
     sf::RenderWindow window;
 
-    std::map < std::string, sf::Text > UI_esc, UI_dialog, UI_lobby;
+    std::map < std::string, sf::Text > UI_pause, UI_game, UI_lobby, UI_settings, UI_acmp;
 
     Renderer(sf::Vector2f, Environment*);
 

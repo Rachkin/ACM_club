@@ -9,51 +9,69 @@ Renderer::Renderer(sf::Vector2f _screenSize, Environment* _env){
     screenSize = _screenSize;
     window.create(sf::VideoMode(screenSize.x, screenSize.y,32), "ACM club)");
 
-    UI_esc["label"].setString("MENU");
-    UI_esc["label"].setCharacterSize(40);
-    UI_esc["label"].setPosition(100,70);
+    UI_pause["resume"].setString("resume");
+    UI_pause["resume"].setCharacterSize(30);
+    UI_pause["resume"].setPosition(120,120);
 
-
-    UI_esc["resume"].setString("resume");
-    UI_esc["resume"].setCharacterSize(30);
-    UI_esc["resume"].setPosition(120,120);
+    UI_pause["settings"].setString("settings");
+    UI_pause["settings"].setCharacterSize(30);
+    UI_pause["settings"].setPosition(120,150);
 
     for(int i = 1; i <= 3; i++){
-        UI_esc["load" + std::to_string(i)].setString("load" + std::to_string(i));
-        UI_esc["load" + std::to_string(i)].setCharacterSize(30);
-        UI_esc["load" + std::to_string(i)].setPosition(120,150 + (i - 1) * 30);
+        UI_pause["load" + std::to_string(i)].setString("load" + std::to_string(i));
+        UI_pause["load" + std::to_string(i)].setCharacterSize(30);
+        UI_pause["load" + std::to_string(i)].setPosition(120,150 + (i) * 30);
     }
 
     for(int i = 1; i <= 3; i++) {
-        UI_esc["save" + std::to_string(i)].setString("save" + std::to_string(i));
-        UI_esc["msave" + std::to_string(i)].setCharacterSize(30);
-        UI_esc["msave" + std::to_string(i)].setPosition(300, 150 + (i - 1) * 30);
+        UI_pause["save" + std::to_string(i)].setString("save" + std::to_string(i));
+        UI_pause["save" + std::to_string(i)].setCharacterSize(30);
+        UI_pause["save" + std::to_string(i)].setPosition(300, 150 + (i) * 30);
     }
 
-    UI_esc["exit"].setString("!exit game!");
-    UI_esc["exit"].setCharacterSize(30);
-    UI_esc["exit"].setPosition(120,300);
+    UI_pause["exit"].setString("!exit game!");
+    UI_pause["exit"].setCharacterSize(30);
+    UI_pause["exit"].setPosition(120,300);
 
+    ///////////////////
 
-    UI_dialog["botton"].setString("menu");
-    UI_dialog["botton"].setCharacterSize(30);
-    UI_dialog["botton"].setPosition(20,window.getSize().y - 50);
+    UI_game["menu_button"].setString("menu");
+    UI_game["menu_button"].setCharacterSize(30);
+    UI_game["menu_button"].setPosition(20,window.getSize().y - 50);
+
+    ///////////////////
 
     UI_lobby["new_game"].setString("new game");
     UI_lobby["new_game"].setCharacterSize(40);
     UI_lobby["new_game"].setPosition(100, 200);
 
-    for(auto &p : UI_esc){
+    //////////////////
+
+    UI_settings["resume"].setString("resume");
+    UI_settings["resume"].setCharacterSize(30);
+    UI_settings["resume"].setPosition(120,120);
+
+    for(auto &p : UI_pause){
         p.second.setFont(env->fonts["arial"]);
         p.second.setFillColor(sf::Color::Black);
     }
 
-    for(auto &p : UI_dialog){
+    for(auto &p : UI_game){
         p.second.setFont(env->fonts["arial"]);
         p.second.setFillColor(sf::Color::Black);
     }
 
     for(auto &p : UI_lobby){
+        p.second.setFont(env->fonts["arial"]);
+        p.second.setFillColor(sf::Color::Black);
+    }
+
+    for(auto &p : UI_settings){
+        p.second.setFont(env->fonts["arial"]);
+        p.second.setFillColor(sf::Color::Black);
+    }
+
+    for(auto &p : UI_acmp){
         p.second.setFont(env->fonts["arial"]);
         p.second.setFillColor(sf::Color::Black);
     }
@@ -111,7 +129,7 @@ void Renderer::draw(){
                         window.getSize().y - 80); // - say.getGlobalBounds().height/2
         window.draw(say);
 
-        for(auto &p : UI_dialog)
+        for(auto &p : UI_game)
             window.draw(p.second);
     }
     else if(env->render_type == RenderType::Pause) {
@@ -120,14 +138,22 @@ void Renderer::draw(){
                             screenSize.y / background.getLocalBounds().height);
         window.draw(background);
 
+        sf::Text label;
+        label.setString("MENU");
+        label.setCharacterSize(40);
+        label.setPosition(100,70);
+        label.setFont(env->fonts["arial"]);
+        label.setFillColor(sf::Color::Black);
+        window.draw(label);
+
         for(int i = 1; i <= 3; i++) {
             std::ifstream in("saves/save" + std::to_string(i) + ".txt");
             std::string s;
             in >> s;
-            UI_esc["load" + std::to_string(i)].setString("load" + std::to_string(i) + "(" + s + ")");
+            UI_pause["load" + std::to_string(i)].setString("load" + std::to_string(i) + "(" + s + ")");
         }
 
-        for(auto &p : UI_esc)
+        for(auto &p : UI_pause)
             window.draw(p.second);
     }
     else if(env->render_type == RenderType::Lobby) {
@@ -146,6 +172,27 @@ void Renderer::draw(){
         window.draw(name_of_game);
 
         for(auto &p : UI_lobby)
+            window.draw(p.second);
+    }else if(env->render_type == RenderType::Settings) {
+        // TODO: Generate okay settings
+        sf::Sprite background = env->sprites["lobby"];
+        background.setScale(screenSize.x / background.getLocalBounds().width,
+                            screenSize.y / background.getLocalBounds().height);
+        window.draw(background);
+
+        sf::Text label;
+        label.setString("SETTINGS");
+        label.setCharacterSize(40);
+        label.setPosition(100,70);
+        label.setFont(env->fonts["arial"]);
+        label.setFillColor(sf::Color::Black);
+        window.draw(label);
+
+        for(auto &p : UI_settings)
+            window.draw(p.second);
+    }else if(env->render_type == RenderType::Acmp) {
+        // TODO: Generate okay acmp
+        for(auto &p : UI_acmp)
             window.draw(p.second);
     }
 
