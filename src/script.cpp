@@ -25,18 +25,23 @@ static void _lua_seti(int id, int s) {
     __script->gv_int[id] = s;
 }
 
+void Script::import(std::string path){
+    if(luaL_dofile(L, path.c_str())){
+        std::cout << "error: script " + path + " not found" << std::endl;
+        std::cout << lua_tostring(L, -1) << std::endl;
+        return;
+    }
+}
+
 void Script::new_game() {
     gv_str[0] = "wry";
 
     L = luaL_newstate();
     luaL_openlibs(L);
 
-    std::string path = "scripts/globals.lua";
-    if(luaL_dofile(L, path.c_str())){
-        std::cout << "error: script " + path + " not found" << std::endl;
-        std::cout << lua_tostring(L, -1) << std::endl;
-        return;
-    }
+    import("scripts/__globals.lua");
+    import("scripts/_init_characters.lua");
+    import("scripts/_init_backgrounds.lua");
 
     luabridge::getGlobalNamespace(L)
             .addFunction("glob_gets", _lua_gets)

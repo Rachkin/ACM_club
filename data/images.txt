@@ -4,12 +4,3 @@ dialog backgrounds/dialog.png
 escmenu backgrounds/escmenu.png
 enterence backgrounds/enterence.jpg
 lobby backgrounds/lobby.png
-giorno characters/giogio.png
-dio characters/dio.png
-it_class1 backgrounds/it_class1.jpg
-it_class2 backgrounds/it_class2.jpg
-it_class3 backgrounds/it_class3.jpg
-it_class4 backgrounds/it_class4.jpg
-coridor1 backgrounds/coridor1.jpg
-coridor2 backgrounds/coridor2.jpg
-class_up backgrounds/class_up.jpg

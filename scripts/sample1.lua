@@ -1,15 +1,15 @@
--- Sample room
+-- Sample1 room
 
 function enter()
     room = {  }
-    room["background"] = "back"
-    room["say"]        = "muda"
-    room["characters"] = {"giorno"}
-    room["speaker"]    = "giorno"
+    room["background"] = coridor2
+    room["say"]        = "Hello"
+    room["characters"] = {happy[yana], neutral[sasha]}
+    room["speaker"]    = name[sasha]
     return room
 end
 
 function next(variant)
-    glob_sets(0, "muda")
-    return "sample" -- next file is sample.lua
+    glob_sets(sasha, "muda")
+    return "sample1" -- next file is sample.lua
 end

@@ -17,6 +17,8 @@ struct Script {
     Script(Environment*);
     lua_State* L;
 
+    void import(std::string);
+
     // Global variables
     std::string gv_str[MAX_VARIABLE_COUNT];
     int         gv_int[MAX_VARIABLE_COUNT];

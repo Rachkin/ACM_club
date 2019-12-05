@@ -95,6 +95,15 @@ Renderer::Renderer(Environment* _env){
     initTexts();
 }
 
+sf::Sprite get_sptite(std::string path){
+    sf::Image image;
+    image.loadFromFile(path);
+    sf::Texture texture;
+    texture.loadFromImage(image);
+    sf::Sprite sprite;
+    sprite.setTexture(texture);
+    return sprite;
+}
 
 
 void Renderer::draw(){
@@ -102,7 +111,12 @@ void Renderer::draw(){
     window.clear(sf::Color::Black);
 
     if(env->render_type == RenderType::Game) {
-        sf::Sprite background = env->sprites[env->screen.background];
+        sf::Image image;
+        image.loadFromFile("images/backgrounds/" + env->screen.background);
+        sf::Texture texture;
+        texture.loadFromImage(image);
+        sf::Sprite background;
+        background.setTexture(texture);
         background.setScale(screenSize.x / background.getLocalBounds().width,
                             (screenSize.y-130) / background.getLocalBounds().height);
 
@@ -111,9 +125,14 @@ void Renderer::draw(){
         int i = 0;
 
         for(auto c : env->screen.characters){
-            sf::Sprite character = env->sprites[c];
+            sf::Image image;
+            image.loadFromFile("images/characters/" + c);
+            sf::Texture texture;
+            texture.loadFromImage(image);
+            sf::Sprite character;
+            character.setTexture(texture);
             double k = 0;
-            if(c == env->screen.speaker) k = 0.8;
+            if(c.find(env->screen.speaker) != c.size()) k = 0.8;
             else k = 0.7;
             character.setScale(window.getSize().y / character.getLocalBounds().height * k,
                                window.getSize().y / character.getLocalBounds().height * k);
@@ -131,7 +150,7 @@ void Renderer::draw(){
         window.draw(dialog);
 
         sf::Text speaker;
-        speaker.setString(env->characters[env->screen.speaker].fullname);
+        speaker.setString(env->screen.speaker);
         speaker.setCharacterSize(30);
         speaker.setFont(env->fonts["arial"]);
         speaker.setFillColor(sf::Color::Black);
@@ -140,7 +159,7 @@ void Renderer::draw(){
         window.draw(speaker);
 
         sf::Text say;
-        say.setString(env->strings[env->screen.say].substr(0, env->string_shown));
+        say.setString(env->screen.say.substr(0, env->string_shown));
         say.setCharacterSize(20);
         say.setFont(env->fonts["arial"]);
         say.setFillColor(sf::Color::Black);
@@ -220,7 +239,7 @@ void Renderer::draw(){
 
 void Renderer::make_defaultscreen(){
     screenSize = screen800;
-    window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name, sf::Style::Resize);
+    window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name);
     initTexts();
 }
 

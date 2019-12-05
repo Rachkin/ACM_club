@@ -2,14 +2,14 @@
 
 function enter()
     room = {  }
-    room["background"] = "coridor1"
-    room["say"]        = glob_gets(txt)
-    room["characters"] = {"giorno"}
-    room["speaker"]    = "giorno"
+    room["background"] = coridor1
+    room["say"]        = "O my gad, Danilla you shto crazy?"
+    room["characters"] = {neutral[sasha]}
+    room["speaker"]    = name[sasha]
     return room
 end
 
 function next(variant)
-    glob_sets(txt, "muda")
-    return "sample" -- next file is sample.lua
+    glob_sets(sasha, "muda")
+    return "sample1" -- next file is sample.lua
 end

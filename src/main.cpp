@@ -103,7 +103,7 @@ int main() {
 
         if(now_time > update_time){
 
-            string_will_shown = min((int64_t)(now_time - textstart_time) / text_speed, (int64_t)env->strings[env->screen.say].size());
+            string_will_shown = min((int64_t)(now_time - textstart_time) / text_speed, (int64_t)env->screen.say.size());
             string_will_shown = max(0ll, string_will_shown);
 
             if(string_will_shown != env->string_shown){
