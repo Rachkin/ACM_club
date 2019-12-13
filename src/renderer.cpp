@@ -229,7 +229,38 @@ void Renderer::draw(){
         for(auto &p : UI_settings)
             window.draw(p.second);
     }else if(env->render_type == RenderType::Acmp) {
+
         // TODO: Generate okay acmp
+        sf::Sprite background = env->sprites["acmp_left"];
+        background.setScale(screenSize.x / background.getLocalBounds().width/2,
+                            screenSize.y / background.getLocalBounds().height);
+        background.setPosition(0, 0);
+        window.draw(background);
+
+        background = env->sprites["acmp_right"];
+        background.setScale(screenSize.x / background.getLocalBounds().width/2,
+                            screenSize.y / background.getLocalBounds().height);
+        background.setPosition(screenSize.x/2, 0);
+        window.draw(background);
+
+        sf::Text name;
+        name.setString(env->screen.name);
+        name.setCharacterSize(30);
+        name.setFont(env->fonts["arial"]);
+        name.setFillColor(sf::Color::Black);
+        name.setPosition(screenSize.x / 4 - name.getLocalBounds().width/2,
+                            30);
+        window.draw(name);
+
+        sf::Text description;
+        description.setString(env->screen.description);
+        description.setCharacterSize(30);
+        description.setFont(env->fonts["arial"]);
+        description.setFillColor(sf::Color::Black);
+        description.setPosition(30,
+                         30);
+        window.draw(name);
+
         for(auto &p : UI_acmp)
             window.draw(p.second);
     }

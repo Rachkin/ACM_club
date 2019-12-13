@@ -45,9 +45,10 @@ void choose(std::map < std::string, sf::Text > &mp, sf::Vector2f mouse){
 
 
 int main() {
-    Environment* env   = new Environment(RenderType::Lobby);
+    Environment* env   = new Environment(RenderType::Acmp);
     Renderer* renderer = new Renderer(env);
     Script* script     = new Script(env);
+    TestingSystem* test_sys = new TestingSystem(env);
 /*
     env->screen.background = "front";
     env->screen.characters = {"giorno"};

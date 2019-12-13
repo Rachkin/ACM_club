@@ -19,12 +19,20 @@ enum class ScreenType {
 };
 
 struct Screen {
-    std::string name;
+    std::string name = "Pupa and Lupa";
     ScreenType  type;
     std::string speaker;
     std::string say;
     std::string background;
     std::vector<std::string> characters;
+
+    std::string description;
+    std::string input;
+    std::string output;
+
+    std::string text;
+    int cursor_pos = 0;
+
     Screen();
     Screen(std::string, ScreenType,
            std::string, std::string, std::string);

@@ -4,3 +4,5 @@ dialog backgrounds/dialog.png
 escmenu backgrounds/escmenu.png
 enterence backgrounds/enterence.jpg
 lobby backgrounds/lobby.png
+acmp_left backgrounds/acmp_left.png
+acmp_right backgrounds/acmp_right.png

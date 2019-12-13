@@ -3,7 +3,7 @@
 function enter()
     room = {  }
     room["background"] = coridor1
-    room["say"]        = "O my gad, Danilla you shto crazy?"
+    room["say"]        = "О май гад, Данила, ты что крейзи?"
     room["characters"] = {neutral[sasha]}
     room["speaker"]    = name[sasha]
     return room
