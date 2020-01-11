@@ -45,7 +45,7 @@ void choose(std::map < std::string, sf::Text > &mp, sf::Vector2f mouse){
 
 
 int main() {
-    Environment* env   = new Environment(RenderType::Acmp);
+    Environment* env   = new Environment(RenderType::Lobby);
     Renderer* renderer = new Renderer(env);
     Script* script     = new Script(env);
     TestingSystem* test_sys = new TestingSystem(env);
@@ -58,8 +58,9 @@ int main() {
     */
 
     int64_t d_next            = 50;
+    int64_t d_start_next      = 100;
     int64_t d_update          = 1000/30;
-    int text_speed            = 100;
+    double text_speed         = 0.015;
     int64_t string_will_shown = 0;
 
     int64_t start_time        = timeSinceEpochMillisec();
@@ -75,13 +76,13 @@ int main() {
 
         while(renderer->window.pollEvent(event)) {
 
-            string_will_shown = min((int64_t)(now_time - textstart_time) / text_speed, (int64_t)env->strings[env->screen.say].size());
+            string_will_shown = min((int64_t)((now_time - textstart_time) * text_speed), (int64_t)env->strings[env->screen.say].size());
             if(next_time <= now_time) {
                 if (event.type == sf::Event::Closed) {
                     renderer->window.close();
                 }
                 if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space || sf::Mouse::isButtonPressed(sf::Mouse::Left))) {
-                    if (string_will_shown == (int) env->strings[env->screen.say].size()) {
+                    if (string_will_shown >= (int) env->strings[env->screen.say].size()) {
                         // TODO: make LUA script
                         //if (env->screen.child == "-1") window.close();
                         script->next(1);
@@ -104,7 +105,7 @@ int main() {
 
         if(now_time > update_time){
 
-            string_will_shown = min((int64_t)(now_time - textstart_time) / text_speed, (int64_t)env->screen.say.size());
+            string_will_shown = (now_time - textstart_time - d_start_next*5) * text_speed;
             string_will_shown = max(0ll, string_will_shown);
 
             if(string_will_shown != env->string_shown){
@@ -168,19 +169,26 @@ int main() {
             } else if(env->render_type == RenderType::Settings) {
                 choose(renderer->UI_settings, mouse);
 
-                if (is_press(renderer->UI_settings["resume"], mouse)) {
+                if (is_press(renderer->UI_settings["cancel"], mouse)) {
+                    env->settings = env->pre_settings;
                     env->render_type = RenderType::Pause;
+
+                }
+                if (is_press(renderer->UI_settings["apply"], mouse)) {
+                    env->pre_settings = env->settings;
+                    renderer->settings_update();
+                    env->render_type = RenderType::Pause;
+
                 }
 
                 if (is_press(renderer->UI_settings["fullscreen"], mouse)) {
-                    renderer->make_fullscreen();
+                    env->settings.is_fullscreen ^= 1;
                 }
-                if (is_press(renderer->UI_settings["defaultscreen"], mouse)) {
-                    renderer->make_defaultscreen();
+                if (is_press(renderer->UI_settings["screen_resolution"], mouse)) {
+                    env->settings.screen_resolution = renderer->next_screen_resolution[env->settings.screen_resolution];
                 }
-                if (is_press(renderer->UI_settings["fullscreen_bordered"], mouse)) {
-                    renderer->make_fullscreen_bordered();
-                }
+                renderer->initTexts();
+
             }else if(env->render_type == RenderType::Acmp) {
                 choose(renderer->UI_acmp, mouse);
 

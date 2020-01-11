@@ -25,6 +25,12 @@ static void _lua_seti(int id, int s) {
     __script->gv_int[id] = s;
 }
 
+static RenderType _lua_to_render_type(std::string s){
+    if(s == "Game") return RenderType::Game;
+    if(s == "Lobby") return RenderType::Lobby;
+    if(s == "Acmp") return RenderType::Acmp;
+}
+
 void Script::import(std::string path){
     if(luaL_dofile(L, path.c_str())){
         std::cout << "error: script " + path + " not found" << std::endl;
@@ -82,10 +88,13 @@ void Script::enter(const std::string& s) {
     env->screen.background = room["background"].cast<std::string>();
     env->screen.say        = room["say"].cast<std::string>();
     env->screen.speaker    = room["speaker"].cast<std::string>();
+    if(!room["type"].isNil())
+        env->render_type =  _lua_to_render_type(room["type"].cast<std::string>());
 
     luabridge::LuaRef tmp = room["characters"]; env->screen.characters.clear();
     if(tmp.isTable()) {
-        for (size_t i = 1, n = (size_t)tmp.length(); (i <= n && !tmp[i].isNil()); i++)
+        for (size_t i = 1, n = (size_t) tmp.length(); (i <= n && !tmp[i].isNil()); i++)
             env->screen.characters.push_back(tmp[i].cast<std::string>());
     }
+
 }

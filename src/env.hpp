@@ -18,6 +18,13 @@ enum class ScreenType {
     Monolog, Variant
 };
 
+struct Task {
+    std::string name;
+    std::string description;
+    std::string input;
+    std::string output;
+};
+
 struct Screen {
     std::string name = "Pupa and Lupa";
     ScreenType  type;
@@ -25,11 +32,7 @@ struct Screen {
     std::string say;
     std::string background;
     std::vector<std::string> characters;
-
-    std::string description;
-    std::string input;
-    std::string output;
-
+    
     std::string text;
     int cursor_pos = 0;
 
@@ -42,9 +45,21 @@ enum class RenderType {
     Lobby, Game, Pause, Acmp, Settings
 };
 
+enum class ScreenResolution {
+    qHDScreen, HDScreen, HDPlusScreen, FHDScreen
+};
+
+struct Settings {
+    ScreenResolution screen_resolution = ScreenResolution::qHDScreen;
+    bool is_fullscreen = 0;
+};
+
 struct Environment {
     RenderType render_type;
     RenderType pre_render_type;
+
+    Settings settings;
+    Settings pre_settings;
 
     Screen screen;
     std::map<std::string, sf::Font>    fonts;

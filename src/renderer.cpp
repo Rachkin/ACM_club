@@ -4,6 +4,53 @@
 
 #include "renderer.hpp"
 
+#include<iostream>
+
+
+void TextBox::setString(std::string s){
+    std::string t;
+    std::string res = "    ";
+
+    int len = 4;
+    for(auto c : s){
+        if(c == ' '){
+            if(len == 0){
+                len = t.size();
+            }else{
+                sf_text.setString(res + " " + t);
+                if(sf_text.getLocalBounds().width > max_width){
+                    res += "\n";
+                }else{
+                    res += " ";
+                }
+                /*
+                if(len + t.size() + 1 > max_len){
+                    res += "\n";
+                    len = t.size();
+                }else{
+                    res += " ";
+                    len += t.size() + 1;
+                }
+                 */
+            }
+            res += t;
+
+            t = "";
+        } else t += c;
+    }
+    if(len != 0)
+        if(len + t.size() + 1 > max_len){
+            res += "\n";
+        }else{
+            res += " ";
+        }
+    res += t;
+    str = res;
+    sf_text.setString(str);
+}
+
+
+
 void Renderer::initTexts(){
     UI_pause["resume"].setString("resume");
     UI_pause["resume"].setCharacterSize(30);
@@ -32,8 +79,8 @@ void Renderer::initTexts(){
     ///////////////////
 
     UI_game["menu_button"].setString("menu");
-    UI_game["menu_button"].setCharacterSize(30);
-    UI_game["menu_button"].setPosition(20, screenSize.y - 50);
+    UI_game["menu_button"].setCharacterSize(20);
+    UI_game["menu_button"].setPosition(20, screenSize.y - 35);
 
     ///////////////////
 
@@ -45,23 +92,24 @@ void Renderer::initTexts(){
     UI_lobby["settings"].setCharacterSize(40);
     UI_lobby["settings"].setPosition(100, 240);
 */
-    //////////////////
+    ////////////////// Setting
 
-    UI_settings["resume"].setString("resume");
-    UI_settings["resume"].setCharacterSize(30);
-    UI_settings["resume"].setPosition(120,120);
+    UI_settings["cancel"].setString("cancel");
+    UI_settings["cancel"].setCharacterSize(30);
+    UI_settings["cancel"].setPosition(120,120);
 
-    UI_settings["fullscreen"].setString("fullscreen");
+    UI_settings["apply"].setString("apply");
+    UI_settings["apply"].setCharacterSize(30);
+    UI_settings["apply"].setPosition(240,120);
+
+    if (env->settings.is_fullscreen == 0) UI_settings["fullscreen"].setString("border");
+    else                                  UI_settings["fullscreen"].setString("fullscreen");
     UI_settings["fullscreen"].setCharacterSize(30);
     UI_settings["fullscreen"].setPosition(120,150);
 
-    UI_settings["fullscreen_bordered"].setString("fullscreen(bordered)");
-    UI_settings["fullscreen_bordered"].setCharacterSize(30);
-    UI_settings["fullscreen_bordered"].setPosition(120,180);
-
-    UI_settings["defaultscreen"].setString("default screen");
-    UI_settings["defaultscreen"].setCharacterSize(30);
-    UI_settings["defaultscreen"].setPosition(120,210);
+    UI_settings["screen_resolution"].setString(string_of_screen_resolution[env->settings.screen_resolution]);
+    UI_settings["screen_resolution"].setCharacterSize(30);
+    UI_settings["screen_resolution"].setPosition(120,210);
 
     for(auto &p : UI_pause){
         p.second.setFont(env->fonts["arial"]);
@@ -91,7 +139,7 @@ void Renderer::initTexts(){
 
 Renderer::Renderer(Environment* _env){
     env = _env;
-    make_defaultscreen();
+    settings_update();
     initTexts();
 }
 
@@ -143,9 +191,10 @@ void Renderer::draw(){
         }
 
         sf::Sprite dialog = env->sprites["dialog"];
-        dialog.setScale(screenSize.x / dialog.getLocalBounds().width,
-                        (130) / dialog.getLocalBounds().height);
-        dialog.setPosition(0, window.getSize().y - 130);
+
+        dialog.setScale(window.getSize().x/ dialog.getLocalBounds().width,
+                        (dialog_size.y) / dialog.getLocalBounds().height);
+        dialog.setPosition(0, window.getSize().y - dialog_size.y);
 
         window.draw(dialog);
 
@@ -154,18 +203,26 @@ void Renderer::draw(){
         speaker.setCharacterSize(30);
         speaker.setFont(env->fonts["arial"]);
         speaker.setFillColor(sf::Color::Black);
-        speaker.setPosition(100,
-                            window.getSize().y - 120);
+        speaker.setPosition(120,
+                            window.getSize().y - dialog_size.y);
         window.draw(speaker);
 
-        sf::Text say;
-        say.setString(env->screen.say.substr(0, env->string_shown));
-        say.setCharacterSize(20);
-        say.setFont(env->fonts["arial"]);
+        TextBox say = TextBox();
+       // say.setString(env->screen.say.substr(0, env->string_shown));
+      //  sf::Text say;
+        say.setCharacterSize(18);
+        say.sf_text.setFont(env->fonts["arial"]);
         say.setFillColor(sf::Color::Black);
-        say.setPosition(120,
-                        window.getSize().y - 80); // - say.getGlobalBounds().height/2
-        window.draw(say);
+     // - say.getGlobalBounds().height/2
+        say.setWidth(window.getSize().x - 140 * 2);
+        say.setString(env->screen.say);
+        say.setCountChar(env->string_shown);
+        say.setPosition(140,
+                        window.getSize().y - 90);
+       // std::cout << say.sf_text.getString().toAnsiString() << std::endl;
+
+       // window.draw(say.sf_text);
+        window.draw(say.getSFText());
 
         for(auto &p : UI_game)
             window.draw(p.second);
@@ -202,7 +259,7 @@ void Renderer::draw(){
         window.draw(background);
 
         sf::Text name_of_game;
-        name_of_game.setString("ACM club in SFU");
+        name_of_game.setString("Lua Programing Club");
         name_of_game.setCharacterSize(50);
         name_of_game.setPosition(70, 100);
         name_of_game.setFont(env->fonts["arial"]);
@@ -268,16 +325,28 @@ void Renderer::draw(){
     window.display();
 }
 
-void Renderer::make_defaultscreen(){
-    screenSize = screen800;
-    window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name);
+void Renderer::settings_update(){
+    if(env->settings.is_fullscreen){
+        screenSize = sf::Vector2f(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
+        window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name, sf::Style::Fullscreen);
+        initTexts();
+        return;
+    }
+    if(env->settings.screen_resolution == ScreenResolution::qHDScreen)      screenSize = screenQHD;
+    if(env->settings.screen_resolution == ScreenResolution::HDScreen)       screenSize = screenHD;
+    if(env->settings.screen_resolution == ScreenResolution::HDPlusScreen)   screenSize = screenHDPlus;
+    if(env->settings.screen_resolution == ScreenResolution::FHDScreen)      screenSize = screenFHD;
+
+    window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name, sf::Style::Titlebar | sf::Style::Close);
     initTexts();
 }
 
+void Renderer::make_defaultscreen(){
+
+}
+
 void Renderer::make_fullscreen(){
-    screenSize = sf::Vector2f(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height);
-    window.create(sf::VideoMode(screenSize.x, screenSize.y), window_name, sf::Style::Fullscreen);
-    initTexts();
+
 }
 
 void Renderer::make_fullscreen_bordered(){
