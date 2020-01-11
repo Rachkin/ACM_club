@@ -2,6 +2,7 @@
 
 #include <fstream>
 
+
 Screen::Screen() { }
 Screen::Screen(std::string name, ScreenType type, 
     std::string speaker, std::string say, std::string background) :
@@ -18,6 +19,9 @@ static void _readUntilSpace(const std::string& src, std::string& dst, int& pos) 
 static void _readUntilEOL(const std::string& src, std::string& dst, int& pos) {
     while(pos < src.size()) dst.push_back(src[pos++]);
 }
+
+
+
 
 Environment::Environment() : render_type(RenderType::Lobby) {
     initTexts(), initSprites(), initCharacters();
@@ -83,3 +87,5 @@ void Environment::initCharacters() {
         characters[name] = Character(name, fullname);
     }
 }
+
+

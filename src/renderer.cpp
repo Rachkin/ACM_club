@@ -14,10 +14,12 @@ void TextBox::setString(std::string s){
     int len = 4;
     for(auto c : s){
         if(c == ' '){
+
             if(len == 0){
                 len = t.size();
             }else{
                 sf_text.setString(res + " " + t);
+               // std::cout << sf_text.getLocalBounds().width << std::endl;
                 if(sf_text.getLocalBounds().width > max_width){
                     res += "\n";
                 }else{
@@ -46,6 +48,8 @@ void TextBox::setString(std::string s){
         }
     res += t;
     str = res;
+  //  std::cout << std::endl<< std::endl<< std::endl<< std::endl<< std::endl << std::endl;
+   // std::cout << str << std::endl;
     sf_text.setString(str);
 }
 
@@ -301,25 +305,49 @@ void Renderer::draw(){
         window.draw(background);
 
         sf::Text name;
-        name.setString(env->screen.name);
+        name.setString(env->task.name);
         name.setCharacterSize(30);
         name.setFont(env->fonts["arial"]);
         name.setFillColor(sf::Color::Black);
-        name.setPosition(screenSize.x / 4 - name.getLocalBounds().width/2,
+        name.setPosition(100 - name.getLocalBounds().width/2,
                             30);
         window.draw(name);
 
-        sf::Text description;
-        description.setString(env->screen.description);
-        description.setCharacterSize(30);
-        description.setFont(env->fonts["arial"]);
+        TextBox description;
+
+        description.setCharacterSize(20);
+        description.sf_text.setFont(env->fonts["arial"]);
+        description.setWidth(window.getSize().x - 30 * 2);
+        description.setString(env->task.description);
         description.setFillColor(sf::Color::Black);
-        description.setPosition(30,
-                         30);
-        window.draw(name);
+        description.setPosition(30, 80);
+
+        window.draw(description.sf_text);
+
+        sf::Text input_lable;
+        input_lable.setString("Input");
+        input_lable.setCharacterSize(25);
+        input_lable.setFont(env->fonts["arial"]);
+        input_lable.setFillColor(sf::Color::Black);
+        input_lable.setPosition(100 - name.getLocalBounds().width/2,
+                         description.sf_text.getPosition().y  + input_lable.getLocalBounds().height + 10);
+        window.draw(input_lable);
+
+        TextBox input;
+
+        input.setCharacterSize(20);
+        input.sf_text.setFont(env->fonts["arial"]);
+        input.setWidth(window.getSize().x - 30 * 2);
+        input.setString(env->task.input);
+        input.setFillColor(sf::Color::Black);
+        input.setPosition(30,
+                          input_lable.getPosition().y  + input.sf_text.getLocalBounds().height + 10);
+
+        window.draw(description.sf_text);
 
         for(auto &p : UI_acmp)
             window.draw(p.second);
+
     }
 
     window.display();

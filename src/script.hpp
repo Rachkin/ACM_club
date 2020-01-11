@@ -9,12 +9,14 @@
 #include <LuaBridge/LuaBridge.h>
 
 #include "env.hpp"
+#include "acmp.hpp"
 
 const int MAX_VARIABLE_COUNT = 2048;
 
 struct Script {
     Environment* env;
-    Script(Environment*);
+    TestingSystem* test_sys;
+    Script(Environment*, TestingSystem*);
     lua_State* L;
 
     void import(std::string);

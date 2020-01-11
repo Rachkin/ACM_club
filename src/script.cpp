@@ -5,7 +5,7 @@
 #include "script.hpp"
 
 static Script* __script = nullptr;
-Script::Script(Environment* env) : env(env) {
+Script::Script(Environment* env, TestingSystem* test_sys) : env(env), test_sys(test_sys) {
 
 }
 
@@ -33,8 +33,8 @@ static RenderType _lua_to_render_type(std::string s){
 
 void Script::import(std::string path){
     if(luaL_dofile(L, path.c_str())){
-        std::cout << "error: script " + path + " not found" << std::endl;
-        std::cout << lua_tostring(L, -1) << std::endl;
+        __make_error("script " + path + " not found");
+     //   std::cout << lua_tostring(L, -1) << std::endl;
         return;
     }
 }
@@ -73,14 +73,14 @@ void Script::enter(const std::string& s) {
 
     std::string path = "scripts/" + s + ".lua";
     if(luaL_dofile(L, path.c_str())){
-        std::cout << "error: script " + path + " not found" << std::endl;
-        std::cout << lua_tostring(L, -1) << std::endl;
+        __make_error("script " + path + " not found");
+        //std::cout << lua_tostring(L, -1) << std::endl;
         return;
     }
 
     luabridge::LuaRef f_enter = luabridge::getGlobal(L, "enter");
     if(f_enter.isNil()) {
-        std::cout << "error: f_enter not found in " + s << std::endl;
+        __make_error("f_enter not found in " + s);
         return;
     }
     luabridge::LuaRef room = f_enter();
@@ -90,6 +90,10 @@ void Script::enter(const std::string& s) {
     env->screen.speaker    = room["speaker"].cast<std::string>();
     if(!room["type"].isNil())
         env->render_type =  _lua_to_render_type(room["type"].cast<std::string>());
+
+    if(env->render_type == RenderType::Acmp){
+        test_sys->upload_task("a+b");
+    }
 
     luabridge::LuaRef tmp = room["characters"]; env->screen.characters.clear();
     if(tmp.isTable()) {

@@ -4,8 +4,13 @@
 #include <string>
 #include <vector>
 #include <map>
+#include <iostream>
 
 #include <SFML/Graphics.hpp>
+
+static void __make_error(const std::string& s){
+    std::cout << "ERROR: " << s << std::endl;
+}
 
 struct Character {
     std::string name;
@@ -23,6 +28,9 @@ struct Task {
     std::string description;
     std::string input;
     std::string output;
+
+    std::vector < std::string > sample_input;
+    std::vector < std::string > sample_output;
 };
 
 struct Screen {
@@ -32,7 +40,7 @@ struct Screen {
     std::string say;
     std::string background;
     std::vector<std::string> characters;
-    
+
     std::string text;
     int cursor_pos = 0;
 
@@ -62,6 +70,7 @@ struct Environment {
     Settings pre_settings;
 
     Screen screen;
+    Task task;
     std::map<std::string, sf::Font>    fonts;
     std::map<std::string, std::string> strings;
     std::map<std::string, sf::Image>   images;

@@ -14,6 +14,8 @@
 struct TestingSystem{
     Environment* env;
 
+    void upload_task(std::string);
+
     std::string input_path;
     std::string output_path;
 

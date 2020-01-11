@@ -13,7 +13,7 @@
 #include "env.hpp"
 #include "renderer.hpp"
 #include "script.hpp"
-#include "acmp.hpp"
+//#include "acmp.hpp"
 
 using namespace std;
 using namespace sf;
@@ -45,10 +45,11 @@ void choose(std::map < std::string, sf::Text > &mp, sf::Vector2f mouse){
 
 
 int main() {
-    Environment* env   = new Environment(RenderType::Lobby);
-    Renderer* renderer = new Renderer(env);
-    Script* script     = new Script(env);
+    Environment* env        = new Environment(RenderType::Lobby);
+    Renderer* renderer      = new Renderer(env);
     TestingSystem* test_sys = new TestingSystem(env);
+    Script* script          = new Script(env, test_sys);
+
 /*
     env->screen.background = "front";
     env->screen.characters = {"giorno"};
@@ -82,7 +83,7 @@ int main() {
                     renderer->window.close();
                 }
                 if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space || sf::Mouse::isButtonPressed(sf::Mouse::Left))) {
-                    if (string_will_shown >= (int) env->strings[env->screen.say].size()) {
+                    if (string_will_shown >= (int) env->strings[env->screen.say].size() && env->    render_type == RenderType::Game) {
                         // TODO: make LUA script
                         //if (env->screen.child == "-1") window.close();
                         script->next(1);
