@@ -7,6 +7,8 @@
 #include <iostream>
 
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
+
 
 static void __make_error(const std::string& s){
     std::cout << "ERROR: " << s << std::endl;
@@ -71,7 +73,8 @@ struct Settings {
 
 struct Environment {
     RenderType render_type;
-    RenderType pre_render_type;
+    RenderType pre_pause_render_type;
+    RenderType pre_settings_render_type;
 
     Settings settings;
     Settings pre_settings;
@@ -87,6 +90,8 @@ struct Environment {
     std::map<std::string, sf::Sprite>  sprites;
     std::map<std::string, Character>   characters;
     int64_t string_shown;
+
+    sf::Music music;
 
     Environment();
     Environment(RenderType);

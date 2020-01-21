@@ -1,5 +1,4 @@
 #include <SFML/Graphics.hpp>
-#include <SFML/Audio.hpp>
 #include <map>
 #include <vector>
 #include <fstream>
@@ -77,6 +76,24 @@ void cf_data_reload(){
     }
 }
 
+void new_game(){
+    script->new_game();
+    textstart_time = now_time;
+    env->render_type = RenderType::Game;
+}
+
+
+void escape_menu(){
+    RenderType pre_pause       = env->pre_pause_render_type;
+    RenderType pre_settings    = env->pre_settings_render_type;
+    if(env->render_type != RenderType::Settings) env->pre_pause_render_type = env->render_type;
+    env->pre_settings_render_type = env->render_type;
+         if(env->render_type == RenderType::Pause)      env->render_type = pre_pause;
+    else if(env->render_type == RenderType::Game)       env->render_type = RenderType::Pause;
+    else if(env->render_type == RenderType::Homework)   env->render_type = RenderType::Pause;
+    else if(env->render_type == RenderType::Settings)   env->render_type = pre_settings;
+}
+
 
 int main() {
 
@@ -88,6 +105,13 @@ int main() {
     env->screen.speaker    = "giorno";
     env->screen.type       = ScreenType::Monolog;
     */
+
+
+    if (!env->music.openFromFile("sounds/music/Sweden.ogg"))
+        return -1; // error
+
+    env->music.setVolume(1000.f);
+    env->music.play();
 
 
 
@@ -111,15 +135,10 @@ int main() {
                             textstart_time = now_time + d_next;
                         }
                         if(env->render_type == RenderType::Lobby){
-                            script->new_game();
-                            textstart_time = now_time;
-                            env->render_type = RenderType::Game;
+                            new_game();
                         }
                         if(env->render_type == RenderType::Homework){
                             cf_data_reload();
-
-
-
                         }
 
                         // TODO: make LUA script
@@ -131,11 +150,7 @@ int main() {
 
                 }
                 if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Escape)) {
-                    RenderType pre       = env->pre_render_type;
-                    env->pre_render_type = env->    render_type;
-                         if(env->render_type == RenderType::Pause)      env->render_type = RenderType::Game;
-                    else if(env->render_type == RenderType::Game)       env->render_type = RenderType::Pause;
-                    else if(env->render_type == RenderType::Settings)   env->render_type = pre;
+                    escape_menu();
                 }
                 next_time = now_time + d_next;
             }
@@ -197,9 +212,7 @@ int main() {
                 choose(renderer->UI_lobby, mouse);
 
                 if (is_press(renderer->UI_lobby["new_game"], mouse)) {
-                    script->new_game();
-                    textstart_time = now_time;
-                    env->render_type = RenderType::Game;
+                    new_game();
                 }
                 if (is_press(renderer->UI_lobby["settings"], mouse)) {
                     env->render_type = RenderType::Settings;
