@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11")
 
 file(GLOB SOURCE_FILES "src/*.cpp")
-add_executable(ACM_club ${SOURCE_FILES})
+add_executable(ACM_club ${SOURCE_FILES} src/json.hpp)
 set(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake_modules" ${CMAKE_MODULE_PATH})
 
 # Add SFML library
@@ -36,3 +36,23 @@ if(LUA_FOUND)
 else()
     message("\n-> Lua directory not found. Set LUA_INCLUDE_DIR to \"src\" subfolder of Lua top-level path.")
 endif()
+
+#LIBCURL_CFLAGS = "-I/usr/local/opt/curl/include"
+#LIBCURL_LIBS = "-L/usr/local/opt/curl/lib -lcurl" ./configure
+
+#if(CURL_FOUND)
+#    message("11111111")
+#endif()
+
+set(CURL_LIBRARY "-lcurl")
+find_package(CURL REQUIRED)
+include_directories(${CURL_INCLUDE_DIR})
+target_link_libraries(ACM_club ${CURL_LIBRARIES})
+
+set(RAPIDJSON_INCLUDE_DIR "rapidjson")
+file(GLOB RAPIDJSON_LIBRARIES "rapidjson/*.o")
+
+include_directories(${RAPIDJSON_INCLUDE_DIR})
+target_link_libraries(ACM_club ${RAPIDJSON_LIBRARIES})
+
+

@@ -27,6 +27,7 @@ std::string TestingSystem::convert(std::string program){
 }
 
 void TestingSystem::upload_task(std::string task_name){
+    /*
     lua_State* L;
     L = luaL_newstate();
     luaL_openlibs(L);
@@ -82,10 +83,12 @@ void TestingSystem::upload_task(std::string task_name){
     if(!sample_output.isNil())  for(int i = 0; sample_output[i].isNil(); i++) env->task.sample_output.push_back(sample_output[i].cast<std::string>());
 
     std::cout << env->task.input << std::endl;
+    */
 }
 
 
 std::string TestingSystem::Test(std::string program, std::string task_name){
+    /*
     std::ofstream solution_file("polygone/solution.lua");
     solution_file << program;
 
@@ -104,5 +107,5 @@ std::string TestingSystem::Test(std::string program, std::string task_name){
     L = luaL_newstate();
     luaL_openlibs(L);
 
-
+*/
 }

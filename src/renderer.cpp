@@ -115,6 +115,11 @@ void Renderer::initTexts(){
     UI_settings["screen_resolution"].setCharacterSize(30);
     UI_settings["screen_resolution"].setPosition(120,210);
 
+    //////////////////////////
+    UI_homework["check"].setString("Check");
+    UI_homework["check"].setCharacterSize(30);
+    UI_homework["check"].setPosition(20, screenSize.y - 50);
+
     for(auto &p : UI_pause){
         p.second.setFont(env->fonts["arial"]);
         p.second.setFillColor(sf::Color::Black);
@@ -135,7 +140,7 @@ void Renderer::initTexts(){
         p.second.setFillColor(sf::Color::Black);
     }
 
-    for(auto &p : UI_acmp){
+    for(auto &p : UI_homework){
         p.second.setFont(env->fonts["arial"]);
         p.second.setFillColor(sf::Color::Black);
     }
@@ -263,7 +268,7 @@ void Renderer::draw(){
         window.draw(background);
 
         sf::Text name_of_game;
-        name_of_game.setString("Lua Programing Club");
+        name_of_game.setString("Programing Club");
         name_of_game.setCharacterSize(50);
         name_of_game.setPosition(70, 100);
         name_of_game.setFont(env->fonts["arial"]);
@@ -289,7 +294,7 @@ void Renderer::draw(){
 
         for(auto &p : UI_settings)
             window.draw(p.second);
-    }else if(env->render_type == RenderType::Acmp) {
+    }else if(env->render_type == RenderType::Homework) {
 
         // TODO: Generate okay acmp
         sf::Sprite background = env->sprites["acmp_left"];
@@ -305,47 +310,62 @@ void Renderer::draw(){
         window.draw(background);
 
         sf::Text name;
-        name.setString(env->task.name);
-        name.setCharacterSize(30);
+        name.setString("Your homework to today");
+        name.setCharacterSize(40);
         name.setFont(env->fonts["arial"]);
         name.setFillColor(sf::Color::Black);
-        name.setPosition(100 - name.getLocalBounds().width/2,
+        name.setPosition(30,
                             30);
         window.draw(name);
 
-        TextBox description;
+        for(int i = 0; i < env->homework.size(); i++){
+            sf::Text id;
+            id.setString(std::to_string(env->homework[i].contest_id));
+            id.setCharacterSize(20);
+            id.setFont(env->fonts["arial"]);
+            id.setFillColor(sf::Color::Black);
+            id.setPosition(50,
+                             100 + i * 20);
+            window.draw(id);
 
-        description.setCharacterSize(20);
-        description.sf_text.setFont(env->fonts["arial"]);
-        description.setWidth(window.getSize().x - 30 * 2);
-        description.setString(env->task.description);
-        description.setFillColor(sf::Color::Black);
-        description.setPosition(30, 80);
+            sf::Text letter;
+            id.setString(env->homework[i].letter);
+            id.setCharacterSize(20);
+            id.setFont(env->fonts["arial"]);
+            id.setFillColor(sf::Color::Black);
+            id.setPosition(120,
+                           100 + i * 20);
+            window.draw(id);
 
-        window.draw(description.sf_text);
+            sf::Text name;
+            name.setString(env->homework[i].name);
+            name.setCharacterSize(20);
+            name.setFont(env->fonts["arial"]);
+            name.setFillColor(sf::Color::Black);
+            name.setPosition(160,
+                             100 + i * 20);
+            window.draw(name);
 
-        sf::Text input_lable;
-        input_lable.setString("Input");
-        input_lable.setCharacterSize(25);
-        input_lable.setFont(env->fonts["arial"]);
-        input_lable.setFillColor(sf::Color::Black);
-        input_lable.setPosition(100 - name.getLocalBounds().width/2,
-                         description.sf_text.getPosition().y  + input_lable.getLocalBounds().height + 10);
-        window.draw(input_lable);
+            sf::Text status;
+            if(env->homework[i].status == SolveResult::OK){
+                status.setString("OK");
+                status.setFillColor(sf::Color::Green);
+            }else if(env->homework[i].status == SolveResult::NO){
+                status.setString("NO");
+                status.setFillColor(sf::Color::Red);
+            }else{
+                status.setString("?");
+                status.setFillColor(sf::Color::Blue);
+            }
+            status.setCharacterSize(20);
+            status.setFont(env->fonts["arial"]);
+            status.setPosition(500,
+                             100 + i * 20);
+            window.draw(status);
+        }
 
-        TextBox input;
 
-        input.setCharacterSize(20);
-        input.sf_text.setFont(env->fonts["arial"]);
-        input.setWidth(window.getSize().x - 30 * 2);
-        input.setString(env->task.input);
-        input.setFillColor(sf::Color::Black);
-        input.setPosition(30,
-                          input_lable.getPosition().y  + input.sf_text.getLocalBounds().height + 10);
-
-        window.draw(description.sf_text);
-
-        for(auto &p : UI_acmp)
+        for(auto &p : UI_homework)
             window.draw(p.second);
 
     }

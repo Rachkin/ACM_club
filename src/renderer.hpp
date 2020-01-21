@@ -78,7 +78,7 @@ struct Renderer{
 
     std::string window_name = "ACM club in PhMS";
 
-    std::map < std::string, sf::Text > UI_pause, UI_game, UI_lobby, UI_settings, UI_acmp;
+    std::map < std::string, sf::Text > UI_pause, UI_game, UI_lobby, UI_settings, UI_homework;
     std::map < ScreenResolution, std::string > string_of_screen_resolution = {
             {ScreenResolution::qHDScreen,    "960x540"},
             {ScreenResolution::HDScreen,     "1280x720"},

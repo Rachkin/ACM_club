@@ -13,7 +13,7 @@
 #include "env.hpp"
 #include "renderer.hpp"
 #include "script.hpp"
-//#include "acmp.hpp"
+#include "homework.hpp"
 
 using namespace std;
 using namespace sf;
@@ -43,12 +43,43 @@ void choose(std::map < std::string, sf::Text > &mp, sf::Vector2f mouse){
     }
 }
 
+Environment* env        = new Environment(RenderType::Lobby);
+Renderer* renderer      = new Renderer(env);
+Script* script          = new Script(env);
+Homework* homework      = new Homework(env);
+
+int64_t d_next            = 50;
+int64_t d_start_next      = 100;
+int64_t d_update          = 1000/30;
+double text_speed         = 0.015;
+int64_t string_will_shown = 0;
+
+int64_t start_time        = timeSinceEpochMillisec();
+int64_t textstart_time    = timeSinceEpochMillisec() + d_next;
+int64_t next_time         = timeSinceEpochMillisec();
+int64_t update_time       = timeSinceEpochMillisec();
+int64_t now_time          = timeSinceEpochMillisec();
+
+
+void cf_data_reload(){
+    bool all_done = true;
+    for(auto task : env->homework){
+        if(task.status != SolveResult::OK){
+            all_done = false;
+            break;
+        }
+    }
+    if(all_done){
+        script->next(1);
+        textstart_time = now_time + d_next;
+    }else{
+        homework->reload();
+    }
+}
+
 
 int main() {
-    Environment* env        = new Environment(RenderType::Lobby);
-    Renderer* renderer      = new Renderer(env);
-    TestingSystem* test_sys = new TestingSystem(env);
-    Script* script          = new Script(env, test_sys);
+
 
 /*
     env->screen.background = "front";
@@ -58,20 +89,11 @@ int main() {
     env->screen.type       = ScreenType::Monolog;
     */
 
-    int64_t d_next            = 50;
-    int64_t d_start_next      = 100;
-    int64_t d_update          = 1000/30;
-    double text_speed         = 0.015;
-    int64_t string_will_shown = 0;
 
-    int64_t start_time        = timeSinceEpochMillisec();
-    int64_t textstart_time    = timeSinceEpochMillisec() + d_next;
-    int64_t next_time         = timeSinceEpochMillisec();
-    int64_t update_time       = timeSinceEpochMillisec();
 
     while(renderer->window.isOpen()) {
         sf::Event event;
-        int64_t now_time = timeSinceEpochMillisec();
+        now_time = timeSinceEpochMillisec();
 
         if (!sf::Mouse::isButtonPressed(sf::Mouse::Left)) lkm = 0;
 
@@ -83,11 +105,26 @@ int main() {
                     renderer->window.close();
                 }
                 if ((event.type == sf::Event::KeyPressed) && (event.key.code == sf::Keyboard::Space || sf::Mouse::isButtonPressed(sf::Mouse::Left))) {
-                    if (string_will_shown >= (int) env->strings[env->screen.say].size() && env->    render_type == RenderType::Game) {
+                    if (string_will_shown >= (int) env->strings[env->screen.say].size()) {
+                        if(env->render_type == RenderType::Game){
+                            script->next(1);
+                            textstart_time = now_time + d_next;
+                        }
+                        if(env->render_type == RenderType::Lobby){
+                            script->new_game();
+                            textstart_time = now_time;
+                            env->render_type = RenderType::Game;
+                        }
+                        if(env->render_type == RenderType::Homework){
+                            cf_data_reload();
+
+
+
+                        }
+
                         // TODO: make LUA script
                         //if (env->screen.child == "-1") window.close();
-                        script->next(1);
-                        textstart_time = now_time + d_next;
+
                     } else {
                         textstart_time = -10000000;
                     }
@@ -190,9 +227,12 @@ int main() {
                 }
                 renderer->initTexts();
 
-            }else if(env->render_type == RenderType::Acmp) {
-                choose(renderer->UI_acmp, mouse);
+            }else if(env->render_type == RenderType::Homework) {
+                choose(renderer->UI_homework, mouse);
+                if (is_press(renderer->UI_homework["check"], mouse)) {
+                    cf_data_reload();
 
+                }
             }
 
             renderer->draw();

@@ -5,7 +5,8 @@
 #include "script.hpp"
 
 static Script* __script = nullptr;
-Script::Script(Environment* env, TestingSystem* test_sys) : env(env), test_sys(test_sys) {
+
+Script::Script(Environment* env) : env(env) {
 
 }
 
@@ -28,7 +29,7 @@ static void _lua_seti(int id, int s) {
 static RenderType _lua_to_render_type(std::string s){
     if(s == "Game") return RenderType::Game;
     if(s == "Lobby") return RenderType::Lobby;
-    if(s == "Acmp") return RenderType::Acmp;
+    if(s == "Homework") return RenderType::Homework;
 }
 
 void Script::import(std::string path){
@@ -91,8 +92,18 @@ void Script::enter(const std::string& s) {
     if(!room["type"].isNil())
         env->render_type =  _lua_to_render_type(room["type"].cast<std::string>());
 
-    if(env->render_type == RenderType::Acmp){
-        test_sys->upload_task("a+b");
+    if(env->render_type == RenderType::Homework){
+        luabridge::LuaRef homework = room["homework"]; env->screen.characters.clear();
+        env->homework.clear();
+        if(!homework.isNil() && homework.isTable()) {
+            for (size_t i = 0, n = (size_t) homework.length(); (i <= n && !homework[i].isNil()); i++){
+                int id = homework[i]["contest_id"].cast<int>();
+                std::string letter = homework[i]["letter"].cast<std::string>();
+                std::string name = "404";
+                if(!homework[i]["name"].isNil()) name = homework[i]["name"].cast<std::string>();
+                env->homework.push_back(Task(id, letter, name));
+            }
+        }
     }
 
     luabridge::LuaRef tmp = room["characters"]; env->screen.characters.clear();

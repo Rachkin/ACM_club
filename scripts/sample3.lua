@@ -1,12 +1,10 @@
+-- Sample1 room
 
 function enter()
     room = {  }
     room["background"] = coridor2
     room["say"]        = "Hello"
-    room["type"]       = "Homework"
-    room["homework"]   = {}
-    room["homework"][0] = {contest_id = 1286, letter = "A", name = "Girlyanda"}
-    room["homework"][1] = {contest_id = 1286, letter = "B", name = "Ints on tree"}
+    room["type"]       = "Game"
     room["characters"] = {happy[yana], neutral[sasha]}
     room["speaker"]    = name[sasha]
     return room

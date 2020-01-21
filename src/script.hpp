@@ -15,8 +15,8 @@ const int MAX_VARIABLE_COUNT = 2048;
 
 struct Script {
     Environment* env;
-    TestingSystem* test_sys;
-    Script(Environment*, TestingSystem*);
+// TestingSystem* test_sys;
+    Script(Environment*);
     lua_State* L;
 
     void import(std::string);

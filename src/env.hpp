@@ -23,14 +23,21 @@ enum class ScreenType {
     Monolog, Variant
 };
 
-struct Task {
-    std::string name;
-    std::string description;
-    std::string input;
-    std::string output;
+struct CodeForcesInfo{
+    std::string username = "vovasher";
+//  std::string password;
+};
 
-    std::vector < std::string > sample_input;
-    std::vector < std::string > sample_output;
+enum class SolveResult {
+    UNDEFINED, OK, NO
+};
+
+struct Task{
+    int contest_id;
+    std::string letter;
+    std::string name;
+    SolveResult status;
+    Task(int contest_id, std::string letter, std::string name):contest_id(contest_id),letter(letter),name(name){}
 };
 
 struct Screen {
@@ -50,7 +57,7 @@ struct Screen {
 };
 
 enum class RenderType {
-    Lobby, Game, Pause, Acmp, Settings
+    Lobby, Game, Pause, Homework, Settings
 };
 
 enum class ScreenResolution {
@@ -69,8 +76,10 @@ struct Environment {
     Settings settings;
     Settings pre_settings;
 
+    CodeForcesInfo cf_info;
+    std::vector<Task> homework;
     Screen screen;
-    Task task;
+
     std::map<std::string, sf::Font>    fonts;
     std::map<std::string, std::string> strings;
     std::map<std::string, sf::Image>   images;
